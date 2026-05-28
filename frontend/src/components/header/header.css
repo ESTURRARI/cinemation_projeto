@@ -1,0 +1,178 @@
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.header{
+  width: 100%;
+  height: 90px;
+
+  background-color: #000;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 0 50px;
+}
+
+.header-left{
+  width: 220px;
+
+  display: flex;
+  align-items: center;
+}
+
+.login-link{
+  color: white;
+
+  text-decoration: none;
+
+  font-size: 20px;
+
+  transition: 0.35s ease;
+
+  position: relative;
+
+  font-family: "Crimson Text", serif;
+}
+
+.login-link::after{
+  content: "";
+
+  position: absolute;
+
+  left: 0;
+  bottom: -4px;
+
+  width: 0%;
+  height: 1px;
+
+  background-color: white;
+
+  transition: 0.35s ease;
+}
+
+.login-link:hover{
+  transform: translateY(-4px) scale(1.03);
+
+  opacity: 0.85;
+}
+
+.login-link:hover::after{
+  width: 100%;
+}
+
+.header-center{
+  position: absolute;
+
+  left: 50%;
+
+  transform: translateX(-50%);
+}
+
+.header-center h1{
+  font-size: 64px;
+
+  font-weight: 600;
+
+  letter-spacing: 4px;
+
+  font-family: "Crimson Text", serif;
+
+  background: linear-gradient(
+    to right,
+    #999999 0%,
+    #ffffff 20%,
+    #ffffff 50%,
+    #d9d9d9 75%,
+    #8f8f8f 100%
+  );
+
+  -webkit-background-clip: text;
+
+  -webkit-text-fill-color: transparent;
+}
+
+.header-right{
+  display: flex;
+
+  align-items: center;
+
+  gap: 40px;
+}
+
+.header-right a{
+  color: white;
+
+  text-decoration: none;
+
+  font-size: 20px;
+
+  transition: 0.35s ease;
+
+  position: relative;
+
+  font-family: "Crimson Text", serif;
+}
+
+.header-right a::after{
+  content: "";
+
+  position: absolute;
+
+  left: 0;
+  bottom: -4px;
+
+  width: 0%;
+  height: 1px;
+
+  background-color: white;
+
+  transition: 0.35s ease;
+}
+
+.header-right a:hover{
+  transform: translateY(-4px) scale(1.03);
+
+  opacity: 0.85;
+}
+
+.header-right a:hover::after{
+  width: 100%;
+}
+
+.profile-icon{
+  color: white;
+
+  font-size: 42px;
+
+  margin-right: 10px;
+
+  transition: 0.35s ease;
+}
+
+.profile-icon:hover{
+  transform: translateY(-4px) scale(1.05);
+
+  opacity: 0.85;
+
+  cursor: pointer;
+}
+
+.notification-icon{
+  color: white;
+
+  font-size: 30px;
+
+  transition: 0.35s ease;
+}
+
+.notification-icon:hover{
+  transform: translateY(-4px) scale(1.05);
+
+  opacity: 0.85;
+
+  cursor: pointer;
+}

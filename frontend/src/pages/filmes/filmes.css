@@ -1,0 +1,186 @@
+.filmes{
+  min-height: 100vh;
+
+  background-color: #010101;
+
+  overflow: hidden;
+}
+
+.blur-top{
+  width: 100%;
+
+  height: 180px;
+
+  background: linear-gradient(
+    to bottom,
+    #001F6C 0%,
+    #010101 100%
+  );
+}
+
+.blur-bottom{
+  width: 100%;
+
+  height: 180px;
+
+  margin-top: 80px;
+
+  background: linear-gradient(
+    to bottom,
+    #010101 0%,
+    #001F6C 100%
+  );
+}
+
+.conteudo-filmes{
+  width: 95%;
+
+  margin: auto;
+}
+
+.barra-pesquisa{
+  width: 100%;
+
+  display: flex;
+
+  justify-content: center;
+
+  position: relative;
+
+  margin-bottom: 25px;
+}
+
+.barra-pesquisa input{
+  width: 520px;
+
+  background-color: #2a2a2a;
+
+  border: none;
+
+  height: 46px;
+
+  border-radius: 999px;
+
+  padding: 0 55px 0 22px;
+
+  color: white;
+
+  font-size: 16px;
+
+  outline: none;
+
+  font-family: "Crimson Text", serif;
+}
+
+.icone-busca{
+  position: absolute;
+
+  right: calc(50% - 245px);
+
+  top: 50%;
+
+  transform: translateY(-50%);
+
+  color: #a7a7a7;
+
+  font-size: 15px;
+}
+
+.filtros{
+  display: flex;
+
+  justify-content: center;
+
+  gap: 14px;
+
+  margin-bottom: 70px;
+}
+
+.filtros button{
+  background-color: #2f49ff;
+
+  border: none;
+
+  color: white;
+
+  padding: 8px 18px;
+
+  border-radius: 999px;
+
+  font-size: 14px;
+
+  cursor: pointer;
+
+  transition: 0.35s ease;
+
+  font-family: "Crimson Text", serif;
+}
+
+.filtros button:hover{
+  background-color: #4960ff;
+}
+
+.categoria{
+  margin-bottom: 70px;
+}
+
+.titulo-categoria{
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  margin-bottom: 25px;
+}
+
+.titulo-categoria span{
+  color: white;
+
+  font-size: 15px;
+
+  cursor: pointer;
+
+  font-family: "Crimson Text", serif;
+}
+
+.categoria h2{
+  color: white;
+
+  margin-bottom: 25px;
+
+  font-size: 30px;
+
+  font-family: "Crimson Text", serif;
+}
+
+.linha-filmes{
+  display: flex;
+
+  gap: 24px;
+
+  flex-wrap: wrap;
+
+  justify-content: flex-start;
+}
+
+.linha-filmes a{
+  transition: 0.35s ease;
+}
+
+.linha-filmes a:hover{
+  transform: scale(1.05);
+}
+
+.linha-filmes img{
+  width: 180px;
+
+  height: 260px;
+
+  object-fit: cover;
+
+  border-radius: 6px;
+
+  box-shadow:
+    0 12px 30px rgba(0,0,0,0.55);
+}

@@ -1,0 +1,126 @@
+.card-filme{
+  min-width: 290px;
+  
+  height: 430px;
+
+  border-radius: 18px;
+
+  overflow: hidden;
+
+  position: relative;
+
+  cursor: pointer;
+
+  transition: 0.35s ease;
+}
+
+.card-filme > img{
+  width: 100%;
+
+  height: 100%;
+
+  object-fit: cover;
+
+  transition: 0.35s ease;
+}
+
+.card-filme:hover{
+  transform: scale(1.04) translateY(-8px);
+
+  z-index: 10;
+}
+
+.card-filme:hover > img{
+  filter: brightness(0.35);
+}
+
+.card-overlay{
+  position: absolute;
+
+  inset: 0;
+
+  display: flex;
+
+  flex-direction: column;
+
+  justify-content: flex-end;
+
+  padding: 20px;
+
+  opacity: 0;
+
+  transition: 0.35s ease;
+
+  background: linear-gradient(
+    to top,
+    rgba(0,0,0,0.98) 0%,
+    rgba(0,0,0,0.6) 55%,
+    transparent 100%
+  );
+}
+
+.card-filme:hover .card-overlay{
+  opacity: 1;
+}
+
+.poster-hover{
+  display: none;
+}
+
+.info-filme{
+  color: white;
+}
+
+.info-filme h2{
+  font-size: 22px;
+  
+  line-height: 30px;
+
+  font-family: "Crimson Text", serif;
+}
+
+.info-filme p{
+  font-size: 17px;
+
+  margin-bottom: 8px;
+
+  line-height: 28px;
+
+  font-family: "Crimson Text", serif;
+}
+
+.sinopse{
+  display: block;
+  
+  margin-top: 14px;
+  
+  opacity: 0.92;
+}
+
+.btn-vermais{
+  display: inline-block;
+
+  margin-top: 12px;
+
+  padding: 10px 22px;
+
+  border-radius: 999px;
+
+  background-color: #2453ff;
+
+  color: white;
+
+  text-decoration: none;
+
+  transition: 0.35s ease;
+
+  font-size: 18px;
+
+  font-family: "Crimson Text", serif;
+}
+
+.btn-vermais:hover{
+  transform: translateY(-3px);
+
+  background-color: #3b66ff;
+}

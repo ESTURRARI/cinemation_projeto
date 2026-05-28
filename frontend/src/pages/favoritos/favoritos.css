@@ -1,0 +1,116 @@
+.favoritos{
+  min-height: 100vh;
+
+  background-color: #010101;
+
+  position: relative;
+
+  overflow: hidden;
+}
+
+.blur-top{
+  width: 100%;
+
+  height: 180px;
+
+  background: linear-gradient(
+    to bottom,
+    #001F6C 0%,
+    #010101 100%
+  );
+}
+
+.blur-bottom{
+  width: 100%;
+
+  height: 180px;
+
+  background: linear-gradient(
+    to bottom,
+    #010101 0%,
+    #001F6C 100%
+  );
+}
+
+.conteudo-favoritos{
+  width: 92%;
+
+  margin: auto;
+
+  padding: 40px 0 80px 0;
+}
+
+.conteudo-favoritos h1{
+  color: white;
+
+  font-size: 52px;
+
+  margin-bottom: 50px;
+
+  font-family: "Crimson Text", serif;
+}
+
+.grid-favoritos{
+  display: grid;
+
+  grid-template-columns: repeat(auto-fit, minmax(220px, 240px));
+
+  gap: 30px;
+
+  justify-content: space-between;
+}
+
+.card-favorito{
+  max-width: 240px;
+
+  text-decoration: none;
+
+  transition: 0.35s ease;
+}
+
+.card-favorito:hover{
+  transform: translateY(-8px);
+}
+
+.card-favorito img{
+  width: 100%;
+
+  height: 340px;
+
+  object-fit: cover;
+
+  display: block;
+}
+
+.info-favorito{
+  background-color: #3b4fff;
+
+  padding: 16px;
+
+  border-bottom-left-radius: 22px;
+
+  border-bottom-right-radius: 22px;
+
+  text-align: center;
+
+  transition: 0.35s ease;
+}
+
+.card-favorito:hover .info-favorito{
+  background-color: #4b5fff;
+}
+
+.info-favorito h2{
+  color: white;
+
+  font-size: 24px;
+
+  font-family: "Crimson Text", serif;
+
+  font-weight: 600;
+}
+
+.info-favorito p,
+.info-favorito span{
+  display: none;
+}

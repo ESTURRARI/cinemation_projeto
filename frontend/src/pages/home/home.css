@@ -1,0 +1,197 @@
+.home{
+  min-height: 100vh;
+
+  background-color: #010101;
+}
+
+.hero{
+  width: 100%;
+
+  height: 620px;
+
+  overflow: hidden;
+
+  position: relative;
+}
+
+.slider{
+  width: 100%;
+
+  height: 100%;
+}
+
+.slides{
+  display: flex;
+
+  width: 400%;
+
+  height: 100%;
+
+  animation: slide 18s infinite;
+}
+
+.slides img{
+  width: 100vw;
+
+  height: 620px;
+
+  object-fit: cover;
+
+  flex-shrink: 0;
+}
+
+.catalogo{
+  width: 96%;
+
+  margin: auto;
+
+  padding: 50px 0;
+}
+
+.catalogo h2{
+  color: white;
+
+  font-size: 42px;
+
+  margin-bottom: 25px;
+
+  font-family: "Crimson Text", serif;
+
+  font-weight: 600;
+}
+
+.linha-filmes{
+  display: flex;
+
+  justify-content: space-between;
+
+  gap: 18px;
+
+  padding: 10px 0 20px 0;
+}
+
+.card-filme{
+  min-width: 230px;
+
+  height: 360px;
+
+  border-radius: 18px;
+
+  overflow: hidden;
+
+  cursor: pointer;
+
+  transition: 0.35s ease;
+
+  position: relative;
+}
+
+.card-filme img{
+  width: 100%;
+
+  height: 100%;
+
+  object-fit: cover;
+}
+
+.card-filme:hover{
+  transform: scale(1.05) translateY(-8px);
+
+  box-shadow:
+    0 15px 30px rgba(0,0,0,0.6);
+}
+
+.blue-glow{
+  width: 100%;
+
+  height: 160px;
+
+  background: linear-gradient(
+    to bottom,
+    #010101 0%,
+    #001F6C 100%
+  );
+}
+
+@keyframes slide{
+
+  0%{
+    transform: translateX(0%);
+  }
+
+  20%{
+    transform: translateX(0%);
+  }
+
+  25%{
+    transform: translateX(-100vw);
+  }
+
+  45%{
+    transform: translateX(-100vw);
+  }
+
+  50%{
+    transform: translateX(-200vw);
+  }
+
+  70%{
+    transform: translateX(-200vw);
+  }
+
+  75%{
+    transform: translateX(-300vw);
+  }
+
+  95%{
+    transform: translateX(-300vw);
+  }
+
+  100%{
+    transform: translateX(0%);
+  }
+
+}
+
+.overlay{
+  position: absolute;
+
+  inset: 0;
+
+  background: linear-gradient(
+    to top,
+    rgba(0,0,0,0.95) 0%,
+    rgba(0,0,0,0.2) 60%,
+    transparent 100%
+  );
+
+  display: flex;
+
+  align-items: flex-end;
+
+  padding: 20px;
+
+  opacity: 0;
+
+  transition: 0.35s ease;
+}
+
+.overlay h3{
+  color: white;
+
+  font-size: 26px;
+
+  font-family: "Crimson Text", serif;
+
+  transform: translateY(15px);
+
+  transition: 0.35s ease;
+}
+
+.card-filme:hover .overlay{
+  opacity: 1;
+}
+
+.card-filme:hover .overlay h3{
+  transform: translateY(0);
+}
