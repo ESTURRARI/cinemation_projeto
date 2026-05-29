@@ -1,0 +1,221 @@
+.cadastro{
+  min-height: 100vh;
+
+  background-color: #010101;
+
+  position: relative;
+
+  overflow: hidden;
+}
+
+/* BOLA SUPERIOR DIREITA */
+
+.bola-top{
+  position: absolute;
+
+  top: -320px;
+
+  right: -280px;
+
+  width: 850px;
+
+  height: 850px;
+
+  border-radius: 50%;
+
+  background: #2142d8;
+
+  filter: blur(180px);
+
+  opacity: 0.9;
+
+  z-index: 1;
+}
+
+/* BOLA INFERIOR ESQUERDA */
+
+.bola-bottom{
+  position: absolute;
+
+  bottom: -350px;
+
+  left: -350px;
+
+  width: 850px;
+
+  height: 850px;
+
+  border-radius: 50%;
+
+  background: #2f49ff;
+
+  filter: blur(180px);
+
+  opacity: 0.85;
+
+  z-index: 1;
+}
+
+/* HEADER */
+
+.header-cadastro{
+  width: 100%;
+
+  height: 90px;
+
+  background-color: #000;
+
+  display: flex;
+
+  justify-content: center;
+
+  align-items: center;
+
+  position: relative;
+
+  z-index: 10;
+}
+
+.header-cadastro h1{
+  color: white;
+
+  font-size: 68px;
+
+  font-family: "Crimson Text", serif;
+
+  font-weight: 600;
+
+  letter-spacing: 2px;
+}
+
+/* CONTEÚDO */
+
+.conteudo-cadastro{
+  min-height: calc(100vh - 90px);
+
+  display: flex;
+
+  justify-content: center;
+
+  align-items: center;
+
+  position: relative;
+
+  z-index: 5;
+}
+
+/* CARD */
+
+.card-cadastro{
+  width: 420px;
+
+  background: rgba(70,70,70,0.85);
+
+  backdrop-filter: blur(10px);
+
+  border-radius: 15px;
+
+  padding: 45px;
+
+  box-shadow:
+    0 12px 30px rgba(0,0,0,0.45);
+}
+
+.card-cadastro h2{
+  color: white;
+
+  text-align: center;
+
+  font-size: 64px;
+
+  margin-bottom: 35px;
+
+  font-family: "Crimson Text", serif;
+
+  font-weight: 600;
+}
+
+/* INPUTS */
+
+.card-cadastro input{
+  width: 100%;
+
+  height: 48px;
+
+  border: none;
+
+  border-radius: 999px;
+
+  padding: 0 18px;
+
+  margin-bottom: 20px;
+
+  background-color: #d9d9d9;
+
+  color: black;
+
+  font-size: 16px;
+
+  font-family: "Crimson Text", serif;
+
+  outline: none;
+
+  box-shadow:
+    0 4px 10px rgba(0,0,0,0.25);
+}
+
+.card-cadastro input::placeholder{
+  color: #777;
+}
+
+/* BOTÃO */
+
+.btn-cadastro{
+  width: 180px;
+
+  height: 48px;
+
+  border: none;
+
+  border-radius: 999px;
+
+  display: block;
+
+  margin: 20px auto 15px auto;
+
+  background-color: #1731b7;
+
+  color: white;
+
+  font-size: 28px;
+
+  cursor: pointer;
+
+  font-family: "Crimson Text", serif;
+
+  transition: 0.35s ease;
+}
+
+.btn-cadastro:hover{
+  background-color: #2f49ff;
+
+  transform: translateY(-2px);
+}
+
+/* TEXTO LOGIN */
+
+.link-login{
+  text-align: center;
+
+  color: white;
+
+  font-size: 18px;
+
+  font-family: "Crimson Text", serif;
+}
+
+.link-login a{
+  color: white;
+
+  text-decoration: underline;
+}

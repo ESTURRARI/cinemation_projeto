@@ -8,42 +8,35 @@ function CardFilme(props){
 
     <div className="card-filme">
 
-      <img src={props.imagem} alt="" />
+      <img
+        src={props.imagem}
+        alt=""
+      />
 
       <div className="card-overlay">
 
-        <div className="card-conteudo">
+        <div className="info-filme">
 
-          <img
-            src={props.imagem}
-            alt=""
-            className="poster-hover"
-          />
+          <h2>{props.nome}</h2>
 
-          <div className="info-filme">
+          <p>
+            <strong>Ano:</strong> {props.ano}
+          </p>
 
-            <h2>{props.nome}</h2>
+          <p>
+            <strong>Gênero:</strong> {props.genero}
+          </p>
 
-            <p>
-              <strong>Ano:</strong> {props.ano}
-            </p>
+          <p className="sinopse">
+            {props.sinopse}
+          </p>
 
-            <p>
-              <strong>Gênero:</strong> {props.genero}
-            </p>
-
-            <p className="sinopse">
-              {props.sinopse}
-            </p>
-
-            <Link
-              to="/detalhes"
-              className="btn-vermais"
-            >
-              Ver mais
-            </Link>
-
-          </div>
+          <Link
+            to="/detalhes"
+            className="btn-vermais"
+          >
+            Ver mais
+          </Link>
 
         </div>
 

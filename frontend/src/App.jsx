@@ -1,4 +1,4 @@
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, useLocation } from 'react-router-dom'
 
 import Header from './components/header/header'
 import Footer from './components/footer/footer'
@@ -11,11 +11,20 @@ import Cadastro from './pages/cadastro/cadastro'
 import Perfil from './pages/perfil/perfil'
 import Detalhes from './pages/detalhes/detalhe'
 import Editar from './pages/editar/editar'
+import Adicionar from './pages/adicionar/adicionar'
 
 function App() {
+
+  const location = useLocation()
+
+  const esconderLayout =
+    location.pathname === '/login' ||
+    location.pathname === '/cadastro'
+
   return (
     <>
-      <Header />
+
+      {!esconderLayout && <Header />}
 
       <Routes>
         <Route path="/" element={<Home />} />
@@ -26,9 +35,11 @@ function App() {
         <Route path="/perfil" element={<Perfil />} />
         <Route path="/detalhes" element={<Detalhes />} />
         <Route path="/editar" element={<Editar />} />
+        <Route path="/adicionar" element={<Adicionar />} />
       </Routes>
 
-      <Footer />
+      {!esconderLayout && <Footer />}
+
     </>
   )
 }

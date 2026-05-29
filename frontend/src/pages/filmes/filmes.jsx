@@ -10,15 +10,19 @@ import bighero from '../../assets/posters/bighero.png'
 import urso from '../../assets/posters/urso.png'
 import zootopia from '../../assets/posters/zootopia2.png'
 import mufasa from '../../assets/posters/mufasa.png'
-import estranho from '../../assets/posters/noiva.png'
+import estranho from '../../assets/posters/jack.png'
 
 import ratatouille from '../../assets/posters/ratatouille.png'
 import elementos from '../../assets/posters/elementos.png'
 import up from '../../assets/posters/up.png'
-import walle from '../../assets/posters/demon.png'
+import walle from '../../assets/posters/walle.png'
+import monstros from '../../assets/posters/monstros.png'
 
+import marine from '../../assets/posters/marine.png'
 import coraline from '../../assets/posters/coraline.png'
 import chihiro from '../../assets/posters/chihiro.png'
+import noiva from '../../assets/posters/noiva.png'
+import castelo from '../../assets/posters/castelo.png'
 
 import black from '../../assets/posters/black.png'
 import jujutsu from '../../assets/posters/jujstsu.png'
@@ -27,6 +31,8 @@ import tokyo from '../../assets/posters/tokyo.png'
 import chainsaw from '../../assets/posters/chainsaw.png'
 
 import { Link } from 'react-router-dom'
+
+import { MdKeyboardArrowDown } from "react-icons/md";
 
 import { FaSearch } from "react-icons/fa";
 
@@ -53,13 +59,30 @@ function Filmes(){
 
         <div className="filtros">
 
-          <button>Gênero ▼</button>
+          <button>
+            Gênero
+            <MdKeyboardArrowDown />
+          </button>
 
-          <button>Ano ▼</button>
+          <button>
+            Ano
+            <MdKeyboardArrowDown />
+          </button>
 
-          <button>Diretor ▼</button>
+          <button>
+            Diretor
+            <MdKeyboardArrowDown />
+          </button>
 
-          <button>Ator ▼</button>
+          <button>
+            Ator
+            <MdKeyboardArrowDown />
+          </button>
+
+          <button>
+            Produtora
+            <MdKeyboardArrowDown />
+          </button>
 
         </div>
 
@@ -67,13 +90,17 @@ function Filmes(){
 
           <div className="titulo-categoria">
 
-            <h2>Marvel</h2>
+            <h2>Todos os Filmes</h2>
 
-            <span>Adicionar +</span>
+            <Link to="/adicionar" className="btn-adicionar">
+
+              Adicionar +
+
+            </Link>
 
           </div>
 
-          <div className="linha-filmes">
+          <div className="linha-posters">
 
             <Link to="/detalhes">
               <img src={venom} alt="" />
@@ -91,15 +118,9 @@ function Filmes(){
               <img src={viuva} alt="" />
             </Link>
 
-          </div>
-
-        </section>
-
-        <section className="categoria">
-
-          <h2>Disney</h2>
-
-          <div className="linha-filmes">
+            <Link to="/detalhes">
+              <img src={spiderman3} alt="" />
+            </Link>
 
             <Link to="/detalhes">
               <img src={bighero} alt="" />
@@ -121,16 +142,6 @@ function Filmes(){
               <img src={estranho} alt="" />
             </Link>
 
-          </div>
-
-        </section>
-
-        <section className="categoria">
-
-          <h2>Pixar</h2>
-
-          <div className="linha-filmes">
-
             <Link to="/detalhes">
               <img src={ratatouille} alt="" />
             </Link>
@@ -140,7 +151,7 @@ function Filmes(){
             </Link>
 
             <Link to="/detalhes">
-              <img src={zootopia} alt="" />
+              <img src={monstros} alt="" />
             </Link>
 
             <Link to="/detalhes">
@@ -151,16 +162,6 @@ function Filmes(){
               <img src={walle} alt="" />
             </Link>
 
-          </div>
-
-        </section>
-
-        <section className="categoria">
-
-          <h2>Laika & Ghibli</h2>
-
-          <div className="linha-filmes">
-
             <Link to="/detalhes">
               <img src={coraline} alt="" />
             </Link>
@@ -170,26 +171,16 @@ function Filmes(){
             </Link>
 
             <Link to="/detalhes">
-              <img src={estranho} alt="" />
+              <img src={noiva} alt="" />
             </Link>
 
             <Link to="/detalhes">
-              <img src={up} alt="" />
+              <img src={castelo} alt="" />
             </Link>
 
             <Link to="/detalhes">
-              <img src={chihiro} alt="" />
+              <img src={marine} alt="" />
             </Link>
-
-          </div>
-
-        </section>
-
-        <section className="categoria">
-
-          <h2>Anime</h2>
-
-          <div className="linha-filmes">
 
             <Link to="/detalhes">
               <img src={black} alt="" />
