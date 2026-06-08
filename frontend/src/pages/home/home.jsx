@@ -9,7 +9,7 @@ import venom from '../../assets/posters/venom.png'
 import black from '../../assets/posters/black.png'
 import urso from '../../assets/posters/urso.png'
 import ratatouille from '../../assets/posters/ratatouille.png'
-import jujutsu from '../../assets/posters/jujstsu.png'
+import jujutsu from '../../assets/posters/jujutsu.png'
 import noiva from '../../assets/posters/noiva.png'
 
 import mufasa from '../../assets/posters/mufasa.png'

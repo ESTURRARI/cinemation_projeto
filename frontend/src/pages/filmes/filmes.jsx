@@ -18,14 +18,14 @@ import up from '../../assets/posters/up.png'
 import walle from '../../assets/posters/walle.png'
 import monstros from '../../assets/posters/monstros.png'
 
-import marine from '../../assets/posters/marine.png'
+import marnie from '../../assets/posters/marnie.png'
 import coraline from '../../assets/posters/coraline.png'
 import chihiro from '../../assets/posters/chihiro.png'
 import noiva from '../../assets/posters/noiva.png'
 import castelo from '../../assets/posters/castelo.png'
 
 import black from '../../assets/posters/black.png'
-import jujutsu from '../../assets/posters/jujstsu.png'
+import jujutsu from '../../assets/posters/jujutsu.png'
 import demon from '../../assets/posters/demon.png'
 import tokyo from '../../assets/posters/tokyo.png'
 import chainsaw from '../../assets/posters/chainsaw.png'
@@ -179,7 +179,7 @@ function Filmes(){
             </Link>
 
             <Link to="/detalhes">
-              <img src={marine} alt="" />
+              <img src={marnie} alt="" />
             </Link>
 
             <Link to="/detalhes">
