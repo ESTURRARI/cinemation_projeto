@@ -5,10 +5,20 @@ import { FaCamera } from "react-icons/fa";
 import { FaPen } from "react-icons/fa";
 
 import { useNavigate } from 'react-router-dom'
+import { useState } from 'react'
+
+
 
 function Adicionar(){
 
   const navigate = useNavigate()
+  const [poster, setPoster] = useState(null)
+  const [banner, setBanner] = useState(null)
+  const [previewPoster, setPreviewPoster] = useState('')
+  const [previewBanner, setPreviewBanner] = useState('')
+
+  console.log(poster)
+  console.log(banner)
 
   return(
 
@@ -41,19 +51,90 @@ function Adicionar(){
 
               <div className="poster-preview vazio">
 
-                <input type="file" />
+                <label className="upload-area">
 
-                <FaCamera />
+                  {previewPoster ? (
+
+                    <img
+                      src={previewPoster}
+                      alt="Poster"
+                    />
+
+                  ) : (
+
+                    <>
+                      <FaCamera />
+                      <h3>Adicionar Poster</h3>
+                      <p>Clique para selecionar uma imagem</p>
+                    </>
+
+                  )}
+
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => {
+
+                      const arquivo = e.target.files[0]
+
+                      setPoster(arquivo)
+
+                      if (arquivo) {
+                        setPreviewPoster(
+                          URL.createObjectURL(arquivo)
+                        )
+                      }
+
+                    }}
+                  />
+
+                </label>
 
               </div>
-
             </div>
 
             <div className="banner-area">
 
               <div className="banner-preview vazio">
 
-                <FaCamera />
+                <label className="upload-area">
+
+                  {previewBanner ? (
+
+                    <img
+                      src={previewBanner}
+                      alt="Banner"
+                    />
+
+                  ) : (
+
+                    <>
+                      <FaCamera />
+                      <h3>Adicionar Banner</h3>
+                      <p>Clique para selecionar uma imagem</p>
+                    </>
+
+                  )}
+
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => {
+
+                      const arquivo = e.target.files[0]
+
+                      setBanner(arquivo)
+
+                      if (arquivo) {
+                        setPreviewBanner(
+                          URL.createObjectURL(arquivo)
+                        )
+                      }
+
+                    }}
+                  />
+
+                </label>
 
               </div>
 
