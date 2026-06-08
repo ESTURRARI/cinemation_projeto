@@ -16,9 +16,60 @@ function Adicionar(){
   const [banner, setBanner] = useState(null)
   const [previewPoster, setPreviewPoster] = useState('')
   const [previewBanner, setPreviewBanner] = useState('')
+  const [titulo, setTitulo] = useState('')
+  const [ano, setAno] = useState('')
+  const [genero, setGenero] = useState('')
+  const [sinopse, setSinopse] = useState('')
+  const [diretor, setDiretor] = useState('')
+  const [ator, setAtor] = useState('')
+  const [produtora, setProdutora] = useState('')
+  const [orcamento, setOrcamento] = useState('')
+  const [idioma, setIdioma] = useState('')
+  const [pais, setPais] = useState('')
+  const [categorias, setCategorias] = useState([])
+  const [produtoras, setProdutoras] = useState([])
+  const [idiomas, setIdiomas] = useState([])
+  const [paises, setPaises] = useState([])
 
-  console.log(poster)
-  console.log(banner)
+  useEffect(() => {
+
+    fetch('http://localhost:8000/categorias')
+      .then(res => res.json())
+      .then(data => setCategorias(data))
+
+    fetch('http://localhost:8000/produtoras')
+      .then(res => res.json())
+      .then(data => setProdutoras(data))
+
+    fetch('http://localhost:8000/linguagem')
+      .then(res => res.json())
+      .then(data => setIdiomas(data))
+
+    fetch('http://localhost:8000/pais')
+      .then(res => res.json())
+      .then(data => setPaises(data))
+
+  }, [])
+
+  function handleSubmit(e) {
+    e.preventDefault()
+
+    const novoFilme = {
+      poster: poster?.name,
+      banner: banner?.name,
+      titulo,
+      ano,
+      genero,
+      sinopse,
+      diretor,
+      ator,
+      produtora,
+      orcamento,
+      idioma,
+      pais,
+    }
+    console.log('Filme a ser salvo:', novoFilme)
+  }
 
   return(
 
@@ -31,6 +82,7 @@ function Adicionar(){
         <div className="topo-formulario">
 
           <button
+            type="button"
             className="btn-voltar"
             onClick={() => navigate(-1)}
           >
@@ -49,7 +101,7 @@ function Adicionar(){
 
             <div className="poster-area">
 
-              <div className="poster-preview vazio">
+              <div className={`poster-preview ${previewPoster ? '' : 'vazio'}`}>
 
                 <label className="upload-area">
 
@@ -95,7 +147,7 @@ function Adicionar(){
 
             <div className="banner-area">
 
-              <div className="banner-preview vazio">
+              <div className={`banner-preview ${previewBanner ? '' : 'vazio'}`}>
 
                 <label className="upload-area">
 
@@ -142,7 +194,7 @@ function Adicionar(){
 
           </div>
 
-          <form className="formulario">
+          <form className="formulario" onSubmit={handleSubmit}>
 
             <div className="grupo-input">
 
@@ -153,6 +205,8 @@ function Adicionar(){
                 <input
                   type="text"
                   placeholder="Digite o título"
+                  value={titulo}
+                  onChange={(e) => setTitulo(e.target.value)}
                 />
 
                 <FaPen className="icone-lapis" />
@@ -172,6 +226,8 @@ function Adicionar(){
                   <input
                     type="text"
                     placeholder="Digite o ano"
+                    value={ano}
+                    onChange={(e) => setAno(e.target.value)}
                   />
 
                   <FaPen className="icone-lapis" />
@@ -186,10 +242,29 @@ function Adicionar(){
 
                 <div className="input-editavel">
 
-                  <input
-                    type="text"
-                    placeholder="Digite o gênero"
-                  />
+                  <select
+                    value={genero}
+                    onChange={(e) => setGenero(e.target.value)}
+                  >
+
+                    <option value="">
+                      Selecione um gênero
+                    </option>
+
+                    {categorias.map((categoria) => (
+
+                      <option
+                        key={categoria.id}
+                        value={categoria.id}
+                      >
+
+                        {categoria.nome}
+
+                      </option>
+
+                    ))}
+
+                  </select>
 
                   <FaPen className="icone-lapis" />
 
@@ -206,7 +281,9 @@ function Adicionar(){
               <div className="input-editavel">
 
                 <textarea
-                    placeholder="Digite a sinopse"
+                  placeholder="Digite a sinopse"
+                  value={sinopse}
+                  onChange={(e) => setSinopse(e.target.value)}
                 ></textarea>
 
                 <FaPen className="icone-lapis textarea-pen" />
@@ -226,6 +303,8 @@ function Adicionar(){
                   <input
                     type="text"
                     placeholder="Digite o diretor"
+                    value={diretor}
+                    onChange={(e) => setDiretor(e.target.value)}
                   />
 
                   <FaPen className="icone-lapis" />
@@ -243,6 +322,8 @@ function Adicionar(){
                   <input
                     type="text"
                     placeholder="Digite o ator principal"
+                    value={ator}
+                    onChange={(e) => setAtor(e.target.value)}
                   />
 
                   <FaPen className="icone-lapis" />
@@ -261,10 +342,29 @@ function Adicionar(){
 
                 <div className="input-editavel">
 
-                  <input
-                    type="text"
-                    placeholder="Digite a produtora"
-                  />
+                  <select
+                    value={produtora}
+                    onChange={(e) => setProdutora(e.target.value)}
+                  >
+
+                    <option value="">
+                      Selecione uma produtora
+                    </option>
+
+                    {produtoras.map((produtora) => (
+
+                      <option
+                        key={produtora.id}
+                        value={produtora.id}
+                      >
+
+                        {produtora.nome}
+
+                      </option>
+
+                    ))}
+
+                  </select>
 
                   <FaPen className="icone-lapis" />
 
@@ -281,6 +381,8 @@ function Adicionar(){
                   <input
                     type="text"
                     placeholder="Digite o orçamento"
+                    value={orcamento}
+                    onChange={(e) => setOrcamento(e.target.value)}
                   />
 
                   <FaPen className="icone-lapis" />
@@ -299,10 +401,29 @@ function Adicionar(){
 
                 <div className="input-editavel">
 
-                  <input
-                    type="text"
-                    placeholder="Digite os idiomas"
-                  />
+                  <select
+                    value={idioma}
+                    onChange={(e) => setIdioma(e.target.value)}
+                  >
+
+                    <option value="">
+                      Selecione um idioma
+                    </option>
+
+                    {idiomas.map((idioma) => (
+
+                      <option
+                        key={idioma.id}
+                        value={idioma.id}
+                      >
+
+                        {idioma.nome}
+
+                      </option>
+
+                    ))}
+
+                  </select>
 
                   <FaPen className="icone-lapis" />
 
@@ -319,6 +440,8 @@ function Adicionar(){
                   <input
                     type="text"
                     placeholder="Digite o país"
+                    value={pais}
+                    onChange={(e) => setPais(e.target.value)}
                   />
 
                   <FaPen className="icone-lapis" />
@@ -331,13 +454,17 @@ function Adicionar(){
 
             <div className="botoes-admin">
 
-              <button className="btn-cancelar">
+              <button
+                type="button"
+                className="btn-cancelar"
+                onClick={() => navigate(-1)}
+              >
 
                 Cancelar
 
               </button>
 
-              <button className="btn-adicionar">
+              <button type="submit" className="btn-adicionar">
 
                 Adicionar
 
