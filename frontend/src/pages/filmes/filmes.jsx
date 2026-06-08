@@ -8,6 +8,8 @@ import { posters } from '../../data/posters'
 import { MdKeyboardArrowDown } from "react-icons/md";
 import { FaSearch } from "react-icons/fa";
 
+import CardFilme from '../../components/cardfilme/cardFilme'
+
 function Filmes(){
 
   const [filmes, setFilmes] = useState([])
@@ -18,6 +20,7 @@ function Filmes(){
       .then(response => response.json())
       .then(data => {
         setFilmes(data)
+        
       })
       .catch(error => {
         console.error(error)
@@ -87,19 +90,22 @@ function Filmes(){
 
           <div className="linha-posters">
 
-            {filmes.map((filme) => (
+            {filmes.map((filme) => {
 
-              <Link
-                key={filme.id}
-                to={`/detalhes/${filme.id}`}
-              >
-                <img
-                  src={posters[filme.imagem]}
-                  alt={filme.titulo}
+              console.log(filme)
+
+              return (
+                <CardFilme
+                  key={filme.id}
+                  id={filme.id}
+                  imagem={posters[filme.imagem]}
+                  nome={filme.titulo}
+                  ano={filme.ano}
+                  genero={filme.categorias}
+                  sinopse={filme.sinopse}
                 />
-              </Link>
-
-            ))}
+              )
+            })}
 
           </div>
 

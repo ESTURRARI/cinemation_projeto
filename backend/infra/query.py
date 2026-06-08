@@ -8,6 +8,7 @@ SELECT
   f.orcamento,
   f.flag,
   f.poster,
+  f.banner,
   pp.nome AS produtora_principal,
   (
     SELECT GROUP_CONCAT(prod_info SEPARATOR ' | ')
@@ -91,12 +92,42 @@ WHERE f.id_filme = %s;
 
 
 moviequery = """
-SELECT 
-  f.*,
-  GROUP_CONCAT(c.nome ORDER BY c.nome SEPARATOR ', ') AS categorias
+SELECT
+    f.id_filme,
+    f.titulo,
+    f.id_produtora_principal,
+    f.orcamento,
+    f.duracao,
+    f.sinopse,
+    f.ano,
+    f.poster,
+    f.banner,
+    f.flag,
+    GROUP_CONCAT(
+        DISTINCT c.nome
+        ORDER BY c.nome
+        SEPARATOR ', '
+    ) AS categorias
+
 FROM filme f
-LEFT JOIN filme_categoria fc ON f.id_filme = fc.id_filme
-LEFT JOIN categoria c ON fc.id_categoria = c.id_categoria
-GROUP BY f.id_filme
+
+LEFT JOIN filme_categoria fc
+    ON f.id_filme = fc.id_filme
+
+LEFT JOIN categoria c
+    ON fc.id_categoria = c.id_categoria
+
+GROUP BY
+    f.id_filme,
+    f.titulo,
+    f.id_produtora_principal,
+    f.orcamento,
+    f.duracao,
+    f.sinopse,
+    f.ano,
+    f.poster,
+    f.banner,
+    f.flag
+
 ORDER BY f.id_filme;
 """

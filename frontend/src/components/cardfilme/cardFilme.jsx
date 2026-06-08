@@ -32,7 +32,7 @@ function CardFilme(props){
           </p>
 
           <Link
-            to="/detalhes"
+            to={`/detalhes/${props.id}`}
             className="btn-vermais"
           >
             Ver mais

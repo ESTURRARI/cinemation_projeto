@@ -25,8 +25,10 @@ def split_info(campo, sep=' | ', sub_sep=' — ', keys=('nome', 'genero')):
 def loadFilminhos():
     db = get_connection()
     cursor = db.cursor()
+
     cursor.execute(moviequery)
     results = cursor.fetchall()
+
     cursor.close()
     db.close()
 
@@ -37,15 +39,16 @@ def loadFilminhos():
             "produtora_principal_id": item[2],
             "orcamento": float(item[3]),
             "duracao": str(item[4]),
-            "sinopse":item[5],
+            "sinopse": item[5],
             "ano": item[6],
             "imagem": item[7],
-            "flag":item[8],
-            "categorias":item[9]
-
+            "banner": item[8],
+            "flag": item[9],
+            "categorias": item[10]
         }
         for item in results
     ]
+
     return filmes
 
 def insertFilminhos(
@@ -62,6 +65,7 @@ def insertFilminhos(
     sinopse,
     ano,
     poster,
+    banner,
     flag
 ):
     db = get_connection()
@@ -70,12 +74,31 @@ def insertFilminhos(
     cursor.execute(
         """
         INSERT INTO filme
-        (titulo, id_produtora_principal, orcamento, duracao, sinopse, ano, poster, flag)
-        VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+        (
+            titulo,
+            id_produtora_principal,
+            orcamento,
+            duracao,
+            sinopse,
+            ano,
+            poster,
+            banner,
+            flag
+        )
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
         """,
-        (nome, produtora_principal, orcamento, duracao, sinopse, ano, poster, flag)
+        (
+            nome,
+            produtora_principal,
+            orcamento,
+            duracao,
+            sinopse,
+            ano,
+            poster,
+            banner,
+            flag
+        )
     )
-
 
     id_filme = cursor.lastrowid
 
@@ -85,13 +108,11 @@ def insertFilminhos(
             (id_filme, id_produtora)
         )
 
-
     for id_categoria in categorias:
         cursor.execute(
             "INSERT INTO filme_categoria (id_filme, id_categoria) VALUES (%s, %s)",
             (id_filme, id_categoria)
         )
-
 
     for id_ator in atores:
         cursor.execute(
@@ -99,20 +120,17 @@ def insertFilminhos(
             (id_filme, id_ator)
         )
 
-
     for id_diretor in diretores:
         cursor.execute(
             "INSERT INTO filme_diretor (id_filme, id_diretor) VALUES (%s, %s)",
             (id_filme, id_diretor)
         )
 
-
     for id_linguagem in linguagens:
         cursor.execute(
             "INSERT INTO filme_linguagem (id_filme, id_linguagem) VALUES (%s, %s)",
             (id_filme, id_linguagem)
         )
-
 
     for id_pais in paises:
         cursor.execute(
@@ -138,21 +156,48 @@ def loadFilmini(id):
 
     if item:
             filme = {
-                "id": item[0],
-                "titulo": item[1],
-                "ano": item[2],
-                "duracao": str(item[3]),
-                "sinopse":item[4],
-                "orcamento": float(item[5]),
-                "flag":item[6],
-                "poster": item[7],
-                "produtora_principal": item[8],
-                "produtoras": split_info(item[9], sep=' | ', sub_sep=' — ', keys=('nome', 'paises')),
-                "categorias": [cat.strip() for cat in item[10].split(',')] if item[10] else [],
-                "linguagens": [lang.strip() for lang in item[11].split(',')] if item[11] else [],
-                "diretores": split_info(item[12], sep=' | ', sub_sep=' — ', keys=('nome', 'genero', 'paises')), #keys=('nome', 'genero', 'paises'))
-                "atores": split_info(item[13], sep=' | ', sub_sep=' — ', keys=('nome', 'genero', 'paises')) #keys=('nome', 'genero', 'paises'))
-            }
+            "id": item[0],
+            "titulo": item[1],
+            "ano": item[2],
+            "duracao": str(item[3]),
+            "sinopse": item[4],
+            "orcamento": float(item[5]),
+            "flag": item[6],
+
+            "poster": item[7],
+            "banner": item[8],
+
+            "produtora_principal": item[9],
+
+            "produtoras": split_info(
+                item[10],
+                sep=' | ',
+                sub_sep=' — ',
+                keys=('nome', 'paises')
+            ),
+
+            "categorias": [
+                cat.strip() for cat in item[11].split(',')
+            ] if item[11] else [],
+
+            "linguagens": [
+                lang.strip() for lang in item[12].split(',')
+            ] if item[12] else [],
+
+            "diretores": split_info(
+                item[13],
+                sep=' | ',
+                sub_sep=' — ',
+                keys=('nome', 'genero', 'paises')
+            ),
+
+            "atores": split_info(
+                item[14],
+                sep=' | ',
+                sub_sep=' — ',
+                keys=('nome', 'genero', 'paises')
+            )
+        }
             return filme
     else:
         return None
@@ -218,7 +263,8 @@ def loadFilminhosPendentes():
             "sinopse":item[5],
             "ano": item[6],
             "imagem": item[7],
-            "flag": bool(item[8])
+            "banner": item[8],
+            "flag": bool(item[9])
         }
         for item in results
     ]

@@ -147,6 +147,7 @@ def post_Cadastrani(handler):
     sinopse = data.get("sinopse")
     duracao = data.get("duracao")
     poster = data.get("imagem")
+    banner = data.get("banner")
 
     orcamento_raw = data.get("orcamento", "0")
     
@@ -185,7 +186,8 @@ def post_Cadastrani(handler):
         sinopse=sinopse,
         ano=ano,
         poster=poster,
-        flag=flag 
+        banner=banner,
+        flag=flag
     )
 
     if flag:

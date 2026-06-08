@@ -47,6 +47,7 @@ function Home() {
         <div className="linha-filmes">
 
           <CardFilme
+            id={1}
             imagem={venom}
             nome="Venom"
             ano="2018"
@@ -55,6 +56,7 @@ function Home() {
           />
 
           <CardFilme
+            id={6}
             imagem={black}
             nome="Black Clover"
             ano="2017"
@@ -63,6 +65,7 @@ function Home() {
           />
 
           <CardFilme
+            id={21}
             imagem={urso}
             nome="Irmão Urso"
             ano="2003"
@@ -71,6 +74,7 @@ function Home() {
           />
 
           <CardFilme
+            id={19}
             imagem={ratatouille}
             nome="Ratatouille"
             ano="2007"
@@ -79,6 +83,7 @@ function Home() {
           />
 
           <CardFilme
+            id={14}
             imagem={jujutsu}
             nome="Jujutsu Kaisen"
             ano="2020"
@@ -87,6 +92,7 @@ function Home() {
           />
 
           <CardFilme
+            id={18}
             imagem={noiva}
             nome="A Noiva Cadáver"
             ano="2005"
@@ -105,6 +111,7 @@ function Home() {
         <div className="linha-filmes">
 
           <CardFilme
+            id={17}
             imagem={mufasa}
             nome="Mufasa"
             ano="2024"
@@ -113,6 +120,7 @@ function Home() {
           />
 
           <CardFilme
+            id={11}
             imagem={demon}
             nome="Demon Slayer"
             ano="2019"
@@ -121,6 +129,7 @@ function Home() {
           />
 
           <CardFilme
+            id={10}
             imagem={coraline}
             nome="Coraline"
             ano="2009"
@@ -129,6 +138,7 @@ function Home() {
           />
 
           <CardFilme
+            id={3}
             imagem={deadpool}
             nome="Deadpool"
             ano="2024"
@@ -137,6 +147,7 @@ function Home() {
           />
 
           <CardFilme
+            id={25}
             imagem={zootopia}
             nome="Zootopia 2"
             ano="2025"
@@ -145,6 +156,7 @@ function Home() {
           />
 
           <CardFilme
+            id={2}
             imagem={thor}
             nome="Thor Ragnarok"
             ano="2017"

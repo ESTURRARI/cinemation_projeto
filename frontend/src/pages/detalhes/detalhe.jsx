@@ -1,39 +1,50 @@
 import './detalhe.css'
 
-import venomBanner from '../../assets/banners/venombanner.png'
-import venomPoster from '../../assets/posters/venom.png'
-
 import { FaHeart } from "react-icons/fa";
 
-import { Link } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 
 import { useEffect, useState } from 'react'
 
+import { posters } from '../../data/posters'
+import { banners } from '../../data/banners'
+
 function Detalhe(){
 
-  const [favoritado, setFavoritado] = useState(false)
+  const { id } = useParams()
 
-  const filme = {
-    nome: 'Venom',
-    imagem: venomPoster,
-    genero: 'Ação',
-    ano: '2018'
-  }
+  const [filme, setFilme] = useState(null)
+  const [favoritado, setFavoritado] = useState(false)
 
   useEffect(() => {
 
-    const favoritos =
-      JSON.parse(localStorage.getItem('favoritos')) || []
+    fetch(`http://localhost:8000/filme?id=${id}`)
+      .then(response => response.json())
+      .then(data => {
 
-    const existe = favoritos.find(
-      item => item.nome === filme.nome
-    )
+        setFilme(data)
 
-    if(existe){
-      setFavoritado(true)
-    }
+        const favoritos =
+          JSON.parse(localStorage.getItem('favoritos')) || []
 
-  }, [])
+        const existe = favoritos.find(
+          item => item.id === data.id
+        )
+
+        if(existe){
+          setFavoritado(true)
+        }
+
+      })
+      .catch(error => {
+        console.error(error)
+      })
+
+  }, [id])
+
+  if (!filme) {
+    return <h1>Carregando...</h1>
+  }
 
   function toggleFavorito(){
 
@@ -43,14 +54,20 @@ function Detalhe(){
     if(favoritado){
 
       favoritos = favoritos.filter(
-        item => item.nome !== filme.nome
+        item => item.id !== filme.id
       )
 
       setFavoritado(false)
 
     }else{
 
-      favoritos.push(filme)
+      favoritos.push({
+        id: filme.id,
+        nome: filme.titulo,
+        imagem: filme.poster,
+        genero: filme.categorias[0],
+        ano: filme.ano
+      })
 
       setFavoritado(true)
     }
@@ -68,7 +85,7 @@ function Detalhe(){
       <section className="banner-filme">
 
         <img
-          src={venomBanner}
+          src={banners[filme.banner]}
           alt=""
           className="banner-img"
         />
@@ -80,34 +97,27 @@ function Detalhe(){
       <section className="conteudo-filme">
 
         <img
-          src={venomPoster}
+          src={posters[filme.poster]}
           alt=""
           className="poster-detalhe"
         />
 
         <div className="info-detalhe">
 
-          <h1>Venom</h1>
+          <h1>{filme.titulo}</h1>
 
           <div className="dados-filme">
 
-            <span>2018</span>
+            <span>{filme.ano}</span>
 
-            <span>Ação</span>
+            <span>{filme.categorias.join(', ')}</span>
 
-            <span>2h 20m</span>
+            <span>{filme.duracao}</span>
 
           </div>
 
           <p className="descricao">
-
-            Eddie Brock é um jornalista investigativo
-            que acaba se tornando hospedeiro de um
-            simbionte alienígena extremamente poderoso.
-            Enquanto tenta controlar a criatura dentro
-            de si, Eddie descobre habilidades
-            sobrenaturais e enfrenta ameaças perigosas.
-
+            {filme.sinopse}
           </p>
 
           <div className="botoes-filme">
@@ -146,42 +156,44 @@ function Detalhe(){
 
           <div className="info-box">
             <h3>Ano</h3>
-            <p>2018</p>
+            <p>{filme.ano}</p>
           </div>
 
           <div className="info-box">
             <h3>Gênero</h3>
-            <p>Ação</p>
+            <p>{filme.categorias.join(', ')}</p>
           </div>
 
           <div className="info-box">
             <h3>Diretor</h3>
-            <p>Ruben Fleischer</p>
+            <p>{filme.diretores[0]?.nome}</p>
           </div>
 
           <div className="info-box">
             <h3>Ator Principal</h3>
-            <p>Tom Hardy</p>
+            <p>{filme.atores[0]?.nome}</p>
           </div>
 
           <div className="info-box">
             <h3>Orçamento</h3>
-            <p>$116.000.000</p>
+            <p>
+            {filme.orcamento.toLocaleString('pt-BR')}
+            </p>
           </div>
 
           <div className="info-box">
             <h3>Produtora</h3>
-            <p>Marvel Studios</p>
+            <p>{filme.produtora_principal}</p>
           </div>
 
           <div className="info-box">
             <h3>Idiomas</h3>
-            <p>Inglês, Português e Espanhol</p>
+            <p>{filme.linguagens.join(', ')}</p>
           </div>
 
           <div className="info-box">
             <h3>País</h3>
-            <p>Estados Unidos</p>
+            <p>{filme.diretores[0]?.paises}</p>
           </div>
 
         </div>
