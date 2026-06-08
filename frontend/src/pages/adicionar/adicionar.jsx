@@ -41,6 +41,8 @@ function Adicionar(){
 
               <div className="poster-preview vazio">
 
+                <input type="file" />
+
                 <FaCamera />
 
               </div>

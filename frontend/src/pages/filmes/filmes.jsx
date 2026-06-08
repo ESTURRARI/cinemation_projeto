@@ -13,6 +13,12 @@ import CardFilme from '../../components/cardfilme/cardFilme'
 function Filmes(){
 
   const [filmes, setFilmes] = useState([])
+  const [busca, setBusca] = useState('')
+  const [filtroGenero, setFiltroGenero] = useState('')
+  const [filtroAno, setFiltroAno] = useState('')
+  const [filtroDiretor, setFiltroDiretor] = useState('')
+  const [filtroAtor, setFiltroAtor] = useState('')
+  const [filtroProdutora, setFiltroProdutora] = useState('')
 
   useEffect(() => {
 
@@ -28,6 +34,60 @@ function Filmes(){
 
   }, [])
 
+  const filmesFiltrados = filmes.filter((filme) => {
+
+  const termo = busca.toLowerCase()
+
+  return (
+
+    (
+      filme.titulo?.toLowerCase().includes(termo) ||
+      filme.categorias?.toLowerCase().includes(termo) ||
+      filme.atores?.toLowerCase().includes(termo) ||
+      filme.diretores?.toLowerCase().includes(termo) ||
+      filme.produtora?.toLowerCase().includes(termo) ||
+      filme.ano?.toString().includes(termo)
+    )
+
+    &&
+
+    (
+      filtroGenero === '' ||
+      filme.categorias?.includes(filtroGenero)
+    )
+
+    &&
+
+    (
+      filtroAno === '' ||
+      filme.ano?.toString() === filtroAno
+    )
+
+    &&
+
+    (
+      filtroDiretor === '' ||
+      filme.diretores?.includes(filtroDiretor)
+    )
+
+    &&
+
+    (
+      filtroAtor === '' ||
+      filme.atores?.includes(filtroAtor)
+    )
+
+    &&
+
+    (
+      filtroProdutora === '' ||
+      filme.produtora === filtroProdutora
+    )
+
+  )
+
+  })
+
   return(
 
     <main className="filmes">
@@ -41,6 +101,8 @@ function Filmes(){
           <input
             type="text"
             placeholder="Busque por títulos, gêneros, atores ou anos..."
+            value={busca}
+            onChange={(e) => setBusca(e.target.value)}
           />
 
           <FaSearch className="icone-busca" />
@@ -49,30 +111,86 @@ function Filmes(){
 
         <div className="filtros">
 
-          <button>
-            Gênero
-            <MdKeyboardArrowDown />
-          </button>
+          <select
+            value={filtroGenero}
+            onChange={(e) => setFiltroGenero(e.target.value)}
+          >
+            <option value="">Gênero</option>
 
-          <button>
-            Ano
-            <MdKeyboardArrowDown />
-          </button>
+            {[...new Set(
+              filmes.flatMap(f =>
+                f.categorias?.split(',').map(c => c.trim()) || []
+              )
+            )].map(genero => (
+              <option key={genero} value={genero}>
+                {genero}
+              </option>
+            ))}
+          </select>
 
-          <button>
-            Diretor
-            <MdKeyboardArrowDown />
-          </button>
+          <select
+            value={filtroAno}
+            onChange={(e) => setFiltroAno(e.target.value)}
+          >
+            <option value="">Ano</option>
 
-          <button>
-            Ator
-            <MdKeyboardArrowDown />
-          </button>
+            {[...new Set(
+              filmes.map(f => f.ano)
+            )].sort((a,b) => b-a).map(ano => (
+              <option key={ano} value={ano}>
+                {ano}
+              </option>
+            ))}
+          </select>
 
-          <button>
-            Produtora
-            <MdKeyboardArrowDown />
-          </button>
+          <select
+            value={filtroDiretor}
+            onChange={(e) => setFiltroDiretor(e.target.value)}
+          >
+            <option value="">Diretor</option>
+
+            {[...new Set(
+              filmes.flatMap(f =>
+                f.diretores?.split(',').map(d => d.trim()) || []
+              )
+            )].map(diretor => (
+              <option key={diretor} value={diretor}>
+                {diretor}
+              </option>
+            ))}
+          </select>
+
+          <select
+            value={filtroAtor}
+            onChange={(e) => setFiltroAtor(e.target.value)}
+          >
+            <option value="">Ator</option>
+
+            {[...new Set(
+              filmes.flatMap(f =>
+                f.atores?.split(',').map(a => a.trim()) || []
+              )
+            )].map(ator => (
+              <option key={ator} value={ator}>
+                {ator}
+              </option>
+            ))}
+          </select>
+
+          <select
+            value={filtroProdutora}
+            onChange={(e) => setFiltroProdutora(e.target.value)}
+          >
+            <option value="">Produtora</option>
+
+            {[...new Set(
+              filmes.map(f => f.produtora)
+            )].map(produtora => (
+              <option key={produtora} value={produtora}>
+                {produtora}
+              </option>
+            ))}
+          </select>
 
         </div>
 
@@ -90,7 +208,7 @@ function Filmes(){
 
           <div className="linha-posters">
 
-            {filmes.map((filme) => {
+            {filmesFiltrados.map((filme) => {
 
               console.log(filme)
 

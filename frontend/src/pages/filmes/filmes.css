@@ -96,35 +96,7 @@
   flex-wrap: wrap;
 }
 
-.filtros button{
-  background-color: #3b4fff;
 
-  border: none;
-
-  color: white;
-
-  padding: 12px 28px;
-
-  border-radius: 999px;
-
-  font-size: 20px;
-
-  cursor: pointer;
-
-  transition: 0.35s ease;
-
-  font-family: "Crimson Text", serif;
-
-  display: flex;
-
-  align-items: center;
-
-  gap: 4px;
-}
-
-.filtros button:hover{
-  background-color: #5366ff;
-}
 
 .categoria{
   margin-bottom: 90px;
@@ -161,7 +133,7 @@
 
   cursor: pointer;
 
-  font-size: 18px;
+  font-size: 22px;
 
   transition: 0.35s ease;
 
@@ -216,8 +188,38 @@
   row-gap: 110px;
 }
 
-.filtros button svg{
-  font-size: 20px;
+.filtros select{
+  background-color: #3b4fff;
 
-  color: rgba(255,255,255,0.85);
+  border: none;
+
+  color: white;
+
+  padding: 12px 16px;
+
+  border-radius: 999px;
+
+  font-size: 22px;
+
+  cursor: pointer;
+
+  transition: 0.35s ease;
+
+  font-family: "Crimson Text", serif;
+
+  outline: none;
+
+  width: 140px;
+
+  text-align: center;
+}
+
+.filtros select:hover{
+  background-color: #5366ff;
+}
+
+.filtros select option{
+  background-color: #171717;
+
+  color: white;
 }
