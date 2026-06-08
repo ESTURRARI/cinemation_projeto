@@ -44,7 +44,10 @@ def loadFilminhos():
             "imagem": item[7],
             "banner": item[8],
             "flag": item[9],
-            "categorias": item[10]
+            "categorias": item[10],
+            "produtora": item[11],
+            "diretores": item[12],
+            "atores": item[13]
         }
         for item in results
     ]

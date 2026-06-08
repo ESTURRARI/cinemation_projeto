@@ -103,13 +103,41 @@ SELECT
     f.poster,
     f.banner,
     f.flag,
+
     GROUP_CONCAT(
         DISTINCT c.nome
         ORDER BY c.nome
         SEPARATOR ', '
-    ) AS categorias
+    ) AS categorias,
+
+    pp.nome AS produtora,
+
+    (
+        SELECT GROUP_CONCAT(
+            DISTINCT CONCAT(d.nome, ' ', d.sobrenome)
+            ORDER BY d.nome
+            SEPARATOR ', '
+        )
+        FROM filme_diretor fd
+        JOIN diretor d ON d.id_diretor = fd.id_diretor
+        WHERE fd.id_filme = f.id_filme
+    ) AS diretores,
+
+    (
+        SELECT GROUP_CONCAT(
+            DISTINCT CONCAT(a.nome, ' ', a.sobrenome)
+            ORDER BY a.nome
+            SEPARATOR ', '
+        )
+        FROM filme_ator fa
+        JOIN ator a ON a.id_ator = fa.id_ator
+        WHERE fa.id_filme = f.id_filme
+    ) AS atores
 
 FROM filme f
+
+LEFT JOIN produtora pp
+    ON pp.id_produtora = f.id_produtora_principal
 
 LEFT JOIN filme_categoria fc
     ON f.id_filme = fc.id_filme
@@ -118,16 +146,7 @@ LEFT JOIN categoria c
     ON fc.id_categoria = c.id_categoria
 
 GROUP BY
-    f.id_filme,
-    f.titulo,
-    f.id_produtora_principal,
-    f.orcamento,
-    f.duracao,
-    f.sinopse,
-    f.ano,
-    f.poster,
-    f.banner,
-    f.flag
+    f.id_filme
 
 ORDER BY f.id_filme;
 """
