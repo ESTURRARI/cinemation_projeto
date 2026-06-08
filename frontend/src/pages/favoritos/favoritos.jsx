@@ -2,7 +2,9 @@ import './favoritos.css'
 
 import { useEffect, useState } from 'react'
 
-import { Link } from 'react-router-dom'
+import { posters } from '../../data/posters'
+
+import CardFilme from '../../components/cardfilme/cardFilme'
 
 function Favoritos(){
 
@@ -27,32 +29,39 @@ function Favoritos(){
 
         <h1>Suas animações favoritas</h1>
 
-        <div className="grid-favoritos">
+        {favoritos.length === 0 ? (
 
-          {favoritos.map((filme, index) => (
+          <div className="sem-favoritos">
 
-            <Link
-              to="/detalhes"
-              className="card-favorito"
-              key={index}
-            >
+            <h2>Você ainda não possui filmes favoritos</h2>
 
-              <img
-                src={filme.imagem}
-                alt=""
+            <p>
+              Explore o catálogo e adicione seus filmes favoritos para vê-los aqui.
+            </p>
+
+          </div>
+
+        ) : (
+
+          <div className="grid-favoritos">
+
+            {favoritos.map((filme) => (
+
+              <CardFilme
+                key={filme.id}
+                id={filme.id}
+                imagem={posters[filme.imagem]}
+                nome={filme.nome}
+                ano={filme.ano}
+                genero={filme.genero}
+                sinopse=""
               />
 
-              <div className="info-favorito">
+            ))}
 
-                <h2>Ver mais</h2>
+          </div>
 
-              </div>
-
-            </Link>
-
-          ))}
-
-        </div>
+        )}
 
       </section>
 
