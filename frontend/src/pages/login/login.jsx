@@ -51,7 +51,7 @@ function Login(){
         data.refresh_token
       )
 
-      navigate('/filmes')
+      navigate('/perfil')
 
     } catch(error) {
 

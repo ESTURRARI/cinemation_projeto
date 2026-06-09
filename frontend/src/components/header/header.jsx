@@ -1,12 +1,57 @@
 import './header.css'
 
 import { Link } from 'react-router-dom'
+import { useEffect, useState } from 'react'
 
 import { FaUserCircle } from "react-icons/fa"
-
 import { IoNotificationsOutline } from "react-icons/io5"
 
 function Header() {
+
+  const [usuario, setUsuario] = useState(null)
+
+  useEffect(() => {
+
+    carregarUsuario()
+
+  }, [])
+
+  async function carregarUsuario() {
+
+    const token = localStorage.getItem(
+      'access_token'
+    )
+
+    if (!token) {
+      return
+    }
+
+    try {
+
+      const response = await fetch(
+        'http://localhost:8000/me',
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      )
+
+      if (!response.ok) {
+        return
+      }
+
+      const data = await response.json()
+
+      setUsuario(data)
+
+    } catch(error) {
+
+      console.error(error)
+
+    }
+
+  }
 
   return (
 
@@ -16,9 +61,25 @@ function Header() {
 
         <FaUserCircle className="profile-icon" />
 
-        <Link to="/login" className="login-link">
-          Faça Login
-        </Link>
+        {usuario ? (
+
+          <Link
+            to="/perfil"
+            className="login-link"
+          >
+            {usuario.nome}
+          </Link>
+
+        ) : (
+
+          <Link
+            to="/login"
+            className="login-link"
+          >
+            Faça Login
+          </Link>
+
+        )}
 
       </div>
 
@@ -30,11 +91,17 @@ function Header() {
 
       <nav className="header-right">
 
-        <Link to="/">Home</Link>
+        <Link to="/home">
+          Home
+        </Link>
 
-        <Link to="/filmes">Filmes</Link>
+        <Link to="/filmes">
+          Filmes
+        </Link>
 
-        <Link to="/favoritos">Favoritos</Link>
+        <Link to="/favoritos">
+          Favoritos
+        </Link>
 
         <IoNotificationsOutline className="notification-icon" />
 

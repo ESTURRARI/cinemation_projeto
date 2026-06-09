@@ -27,7 +27,8 @@ function App() {
       {!esconderLayout && <Header />}
 
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={<Login />} />
+        <Route path="/home" element={<Home />} />
         <Route path="/filmes" element={<Filmes />} />
         <Route path="/favoritos" element={<Favoritos />} />
         <Route path="/login" element={<Login />} />
