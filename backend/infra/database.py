@@ -5,7 +5,7 @@ def get_connection():
     return mysql.connector.connect(
         host="localhost",
         user="root",
-        password="root",
+        password="senai",
         database="filme_mari"
     )
 
@@ -23,6 +23,7 @@ def split_info(campo, sep=' | ', sub_sep=' — ', keys=('nome', 'genero')):
     return resultado
 
 def loadFilminhos():
+    
     db = get_connection()
     cursor = db.cursor()
 

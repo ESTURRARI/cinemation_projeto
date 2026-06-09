@@ -5,9 +5,7 @@ import { FaCamera } from "react-icons/fa";
 import { FaPen } from "react-icons/fa";
 
 import { useNavigate } from 'react-router-dom'
-import { useState } from 'react'
-
-
+import { useState, useEffect } from 'react'
 
 function Adicionar(){
 
@@ -27,7 +25,6 @@ function Adicionar(){
   const [idioma, setIdioma] = useState('')
   const [pais, setPais] = useState('')
   const [categorias, setCategorias] = useState([])
-  const [produtoras, setProdutoras] = useState([])
   const [idiomas, setIdiomas] = useState([])
   const [paises, setPaises] = useState([])
 
@@ -37,41 +34,70 @@ function Adicionar(){
       .then(res => res.json())
       .then(data => setCategorias(data))
 
-    fetch('http://localhost:8000/produtoras')
-      .then(res => res.json())
-      .then(data => setProdutoras(data))
-
-    fetch('http://localhost:8000/linguagem')
+    fetch('http://localhost:8000/linguagens')
       .then(res => res.json())
       .then(data => setIdiomas(data))
 
-    fetch('http://localhost:8000/pais')
+    fetch('http://localhost:8000/paises')
       .then(res => res.json())
       .then(data => setPaises(data))
 
   }, [])
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
+
     e.preventDefault()
 
     const novoFilme = {
-      poster: poster?.name,
-      banner: banner?.name,
       titulo,
       ano,
-      genero,
       sinopse,
-      diretor,
-      ator,
-      produtora,
       orcamento,
-      idioma,
-      pais,
+
+      imagem: poster?.name,
+      banner: banner?.name,
+
+      categoria_id: [Number(genero)],
+      linguagem_id: [Number(idioma)],
+      pais_origem_id: [Number(pais)],
+
+      produtora,
+      diretor,
+      ator
     }
-    console.log('Filme a ser salvo:', novoFilme)
+
+    try {
+
+      const response = await fetch(
+        'http://localhost:8000/cadastrani',
+        {
+          method: 'POST',
+
+          headers: {
+            'Content-Type': 'application/json'
+          },
+
+          body: JSON.stringify(novoFilme)
+        }
+      )
+
+      const data = await response.json()
+
+      console.log(data)
+
+      alert('Filme enviado com sucesso!')
+
+    } catch(error) {
+
+      console.error(error)
+
+      alert('Erro ao cadastrar filme.')
+
+    }
+
   }
 
-  return(
+  return (  // ✅ CORREÇÃO: return adicionado aqui
 
     <main className="editar">
 
@@ -342,29 +368,12 @@ function Adicionar(){
 
                 <div className="input-editavel">
 
-                  <select
+                  <input
+                    type="text"
+                    placeholder="Digite a produtora"
                     value={produtora}
                     onChange={(e) => setProdutora(e.target.value)}
-                  >
-
-                    <option value="">
-                      Selecione uma produtora
-                    </option>
-
-                    {produtoras.map((produtora) => (
-
-                      <option
-                        key={produtora.id}
-                        value={produtora.id}
-                      >
-
-                        {produtora.nome}
-
-                      </option>
-
-                    ))}
-
-                  </select>
+                  />
 
                   <FaPen className="icone-lapis" />
 
@@ -437,12 +446,27 @@ function Adicionar(){
 
                 <div className="input-editavel">
 
-                  <input
-                    type="text"
-                    placeholder="Digite o país"
+                  <select
                     value={pais}
                     onChange={(e) => setPais(e.target.value)}
-                  />
+                  >
+
+                    <option value="">
+                      Selecione um país
+                    </option>
+
+                    {paises.map((pais) => (
+
+                      <option
+                        key={pais.id}
+                        value={pais.id}
+                      >
+                        {pais.nome}
+                      </option>
+
+                    ))}
+
+                  </select>
 
                   <FaPen className="icone-lapis" />
 
