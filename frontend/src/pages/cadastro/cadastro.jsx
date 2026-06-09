@@ -1,8 +1,90 @@
 import './cadastro.css'
 
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import { useState } from 'react'
 
 function Cadastro(){
+
+  const navigate = useNavigate()
+
+  const [email, setEmail] = useState('')
+  const [username, setUsername] = useState('')
+  const [senha, setSenha] = useState('')
+  const [confirmarSenha, setConfirmarSenha] = useState('')
+
+  async function handleCadastro() {
+
+    if (
+      !email ||
+      !username ||
+      !senha ||
+      !confirmarSenha
+    ) {
+
+      alert('Preencha todos os campos.')
+
+      return
+    }
+
+    if (senha !== confirmarSenha) {
+
+      alert('As senhas não coincidem.')
+
+      return
+    }
+
+    try {
+
+      const response = await fetch(
+        'http://localhost:8000/register',
+        {
+          method: 'POST',
+
+          headers: {
+            'Content-Type': 'application/json'
+          },
+
+          body: JSON.stringify({
+            nome: username,
+            sobrenome: '',
+            apelido: username,
+            email,
+            senha,
+            data_nascimento: null,
+            imagem: null
+          })
+        }
+      )
+
+      const data = await response.json()
+
+      console.log(data)
+
+      if (!response.ok) {
+
+        alert(
+          data.error ||
+          'Erro ao cadastrar usuário.'
+        )
+
+        return
+      }
+
+      alert('Cadastro realizado com sucesso!')
+
+      navigate('/login')
+
+    } catch(error) {
+
+      console.error(error)
+
+      alert(
+        'Erro ao conectar com o servidor.'
+      )
+
+    }
+
+  }
 
   return(
 
@@ -27,24 +109,43 @@ function Cadastro(){
           <input
             type="email"
             placeholder="E-mail"
+            value={email}
+            onChange={(e) =>
+              setEmail(e.target.value)
+            }
           />
 
           <input
             type="text"
             placeholder="Username"
+            value={username}
+            onChange={(e) =>
+              setUsername(e.target.value)
+            }
           />
 
           <input
             type="password"
             placeholder="Password"
+            value={senha}
+            onChange={(e) =>
+              setSenha(e.target.value)
+            }
           />
 
           <input
             type="password"
             placeholder="Confirm Password"
+            value={confirmarSenha}
+            onChange={(e) =>
+              setConfirmarSenha(e.target.value)
+            }
           />
 
-          <button className="btn-cadastro">
+          <button
+            className="btn-cadastro"
+            onClick={handleCadastro}
+          >
 
             Cadastrar
 

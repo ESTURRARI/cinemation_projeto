@@ -46,6 +46,12 @@ function Adicionar(){
 
   async function handleSubmit(e) {
 
+    const token = localStorage.getItem(
+      'access_token'
+    )
+
+    console.log(token)
+
     e.preventDefault()
 
     const novoFilme = {
@@ -74,7 +80,8 @@ function Adicionar(){
           method: 'POST',
 
           headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
           },
 
           body: JSON.stringify(novoFilme)
@@ -97,7 +104,7 @@ function Adicionar(){
 
   }
 
-  return (  // ✅ CORREÇÃO: return adicionado aqui
+  return ( 
 
     <main className="editar">
 

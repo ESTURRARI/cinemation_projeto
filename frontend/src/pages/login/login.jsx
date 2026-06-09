@@ -24,14 +24,34 @@ function Login(){
 
           body: new URLSearchParams({
             email,
-            senha
+            password: senha
           })
         }
       )
 
       const data = await response.json()
 
-      console.log(data)
+      if (!response.ok) {
+
+        alert(
+          data.error ||
+          'Email ou senha inválidos.'
+        )
+
+        return
+      }
+
+      localStorage.setItem(
+        'access_token',
+        data.access_token
+      )
+
+      localStorage.setItem(
+        'refresh_token',
+        data.refresh_token
+      )
+
+      navigate('/filmes')
 
     } catch(error) {
 
