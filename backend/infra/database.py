@@ -244,6 +244,7 @@ def deleteFilminho(id_filme):
     cursor.execute("DELETE FROM filme_diretor WHERE id_filme = %s", (id_filme,))
     cursor.execute("DELETE FROM filme_linguagem WHERE id_filme = %s", (id_filme,))
     cursor.execute("DELETE FROM filme_produtora WHERE id_filme = %s", (id_filme,))
+    cursor.execute("DELETE FROM filme_pais WHERE id_filme = %s", (id_filme,))
 
 
     cursor.execute(

@@ -388,10 +388,6 @@ def patch_Filme(handler):
         handler._send_json({"error": "Filme não encontrado"}, 404)
         return
 
-    if filme["flag"] == 0:
-        handler._send_json({"error": "Filme ainda não aprovado"}, 403)
-        return
-
     content_length = int(handler.headers.get('Content-Length', 0))
     body = handler.rfile.read(content_length).decode('utf-8')
 
@@ -410,13 +406,10 @@ def patch_Filme(handler):
         campos_para_atualizar["id_produtora_principal"] = data["id_produtora_principal"]
 
     if "orcamento" in data:
-        campos_para_atualizar["orcamento"] = int(
-            data["orcamento"]
-            .replace("R$", "")
-            .replace(".", "")
-            .replace(",", "")
-            .strip()
-        )
+        try:
+            campos_para_atualizar["orcamento"] = int(str(data["orcamento"]).replace("R$", "").replace(".", "").replace(",", "").strip())
+        except:
+            pass
 
     if "duracao" in data:
         campos_para_atualizar["duracao"] = data["duracao"]
@@ -433,22 +426,49 @@ def patch_Filme(handler):
     if campos_para_atualizar:
         patchCamposFilme(id_filme, campos_para_atualizar)
 
-    if "atores" in data:
-        patchRelacionamento(id_filme, "filme_ator", "id_ator", data["atores"])
+    # --- Diretor por nome ---
+    diretor_nome = data.get("diretor_nome", "").strip()
+    if diretor_nome:
+        id_dir = getActorDirectorByName("diretor", diretor_nome)
+        if id_dir is None:
+            id_dir = insertActorDirectorReturnId("diretor", diretor_nome)
+        patchRelacionamento(id_filme, "filme_diretor", "id_diretor", [id_dir])
+    elif "diretor_nome" in data:
+        patchRelacionamento(id_filme, "filme_diretor", "id_diretor", [])
 
-    if "diretores" in data:
-        patchRelacionamento(id_filme, "filme_diretor", "id_diretor", data["diretores"])
+    # --- Ator por nome ---
+    ator_nome = data.get("ator_nome", "").strip()
+    if ator_nome:
+        id_ator = getActorDirectorByName("ator", ator_nome)
+        if id_ator is None:
+            id_ator = insertActorDirectorReturnId("ator", ator_nome)
+        patchRelacionamento(id_filme, "filme_ator", "id_ator", [id_ator])
+    elif "ator_nome" in data:
+        patchRelacionamento(id_filme, "filme_ator", "id_ator", [])
 
-    if "categorias" in data:
-        patchRelacionamento(id_filme, "filme_categoria", "id_categoria", data["categorias"])
+    # --- Produtora por nome ---
+    produtora_nome = data.get("produtora_nome", "").strip()
+    if produtora_nome:
+        id_prod = getProducerByName(produtora_nome)
+        if id_prod is None:
+            from infra.genresProducers import insertGenresProducer
+            insertGenresProducer("produtora", produtora_nome)
+            id_prod = getProducerByName(produtora_nome)
+        if id_prod:
+            campos_para_atualizar["id_produtora_principal"] = id_prod
+            patchCamposFilme(id_filme, {"id_produtora_principal": id_prod})
+            patchRelacionamento(id_filme, "filme_produtora", "id_produtora", [id_prod])
+    elif "produtora_nome" in data:
+        patchCamposFilme(id_filme, {"id_produtora_principal": None})
+        patchRelacionamento(id_filme, "filme_produtora", "id_produtora", [])
 
-    if "linguagens" in data:
-        patchRelacionamento(id_filme, "filme_linguagem", "id_linguagem", data["linguagens"])
+    if "categoria_id" in data:
+        patchRelacionamento(id_filme, "filme_categoria", "id_categoria", data["categoria_id"])
 
-    if "paises" in data:
-        patchRelacionamento(id_filme, "filme_pais", "id_pais", data["paises"])
+    if "linguagem_id" in data:
+        patchRelacionamento(id_filme, "filme_linguagem", "id_linguagem", data["linguagem_id"])
 
-    if "produtoras" in data:
-        patchRelacionamento(id_filme, "filme_produtora", "id_produtora", data["produtoras"])
+    if "pais_origem_id" in data:
+        patchRelacionamento(id_filme, "filme_pais", "id_pais", data["pais_origem_id"])
 
     handler._send_json({"message": "Filme editado com sucesso"})

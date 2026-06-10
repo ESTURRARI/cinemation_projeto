@@ -168,7 +168,11 @@ class MyHandler(SimpleHTTPRequestHandler):
             self._send_json({"error": "ID inválido"}, 400)
             return
 
-        payload = verify_jwt(header_auth)
+        if not header_auth.startswith("Bearer "):
+            self._send_json({"error": "Token não informado"}, 401)
+            return
+        token = header_auth.split(" ")[1]
+        payload = verify_jwt(token)
         if not payload:
             self._send_json({"error": "Token inválido ou expirado"}, 401)
             return
