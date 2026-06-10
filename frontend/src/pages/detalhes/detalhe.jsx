@@ -1,66 +1,49 @@
 import './detalhe.css'
 
 import { FaHeart } from "react-icons/fa";
-
 import { Link, useParams } from 'react-router-dom'
-
 import { useEffect, useState } from 'react'
 
 import { posters } from '../../data/posters'
 import { banners } from '../../data/banners'
+import { useFetch } from '../../hooks/useFetch'
 
 function Detalhe(){
 
   const { id } = useParams()
 
-  const [filme, setFilme] = useState(null)
+  const { data: filme, loading, erro, refetch } = useFetch(`http://localhost:8000/filme?id=${id}`)
   const [favoritado, setFavoritado] = useState(false)
 
   useEffect(() => {
+    if (!filme) return
 
-    fetch(`http://localhost:8000/filme?id=${id}`)
-      .then(response => response.json())
-      .then(data => {
+    const favoritos = JSON.parse(localStorage.getItem('favoritos')) || []
+    const existe = favoritos.find(item => item.id === filme.id)
+    if (existe) setFavoritado(true)
+  }, [filme])
 
-        setFilme(data)
-
-        const favoritos =
-          JSON.parse(localStorage.getItem('favoritos')) || []
-
-        const existe = favoritos.find(
-          item => item.id === data.id
-        )
-
-        if(existe){
-          setFavoritado(true)
-        }
-
-      })
-      .catch(error => {
-        console.error(error)
-      })
-
-  }, [id])
-
-  if (!filme) {
+  if (loading) {
     return <h1>Carregando...</h1>
+  }
+
+  if (erro) {
+    return (
+      <main className="detalhe">
+        <p>{erro}</p>
+        <button onClick={refetch}>Tentar novamente</button>
+      </main>
+    )
   }
 
   function toggleFavorito(){
 
-    let favoritos =
-      JSON.parse(localStorage.getItem('favoritos')) || []
+    let favoritos = JSON.parse(localStorage.getItem('favoritos')) || []
 
     if(favoritado){
-
-      favoritos = favoritos.filter(
-        item => item.id !== filme.id
-      )
-
+      favoritos = favoritos.filter(item => item.id !== filme.id)
       setFavoritado(false)
-
-    }else{
-
+    } else {
       favoritos.push({
         id: filme.id,
         nome: filme.titulo,
@@ -68,14 +51,10 @@ function Detalhe(){
         genero: filme.categorias[0],
         ano: filme.ano
       })
-
       setFavoritado(true)
     }
 
-    localStorage.setItem(
-      'favoritos',
-      JSON.stringify(favoritos)
-    )
+    localStorage.setItem('favoritos', JSON.stringify(favoritos))
   }
 
   return(
@@ -83,42 +62,25 @@ function Detalhe(){
     <main className="detalhe">
 
       <section className="banner-filme">
-
-        <img
-          src={banners[filme.banner]}
-          alt=""
-          className="banner-img"
-        />
-
+        <img src={banners[filme.banner]} alt="" className="banner-img" />
         <div className="overlay-banner"></div>
-
       </section>
 
       <section className="conteudo-filme">
 
-        <img
-          src={posters[filme.poster]}
-          alt=""
-          className="poster-detalhe"
-        />
+        <img src={posters[filme.poster]} alt="" className="poster-detalhe" />
 
         <div className="info-detalhe">
 
           <h1>{filme.titulo}</h1>
 
           <div className="dados-filme">
-
             <span>{filme.ano}</span>
-
             <span>{filme.categorias.join(', ')}</span>
-
             <span>{filme.duracao}</span>
-
           </div>
 
-          <p className="descricao">
-            {filme.sinopse}
-          </p>
+          <p className="descricao">{filme.sinopse}</p>
 
           <div className="botoes-filme">
 
@@ -126,17 +88,11 @@ function Detalhe(){
               className={`btn-favorito ${favoritado ? 'ativo' : ''}`}
               onClick={toggleFavorito}
             >
-
               <FaHeart />
-
               {favoritado ? 'Favoritado' : 'Favoritar'}
-
             </button>
 
-            <Link
-              to={`/editar/${id}`}
-              className="btn-editar"
-            >
+            <Link to={`/editar/${id}`} className="btn-editar">
               Editar Filme
             </Link>
 
@@ -174,9 +130,7 @@ function Detalhe(){
 
           <div className="info-box">
             <h3>Orçamento</h3>
-            <p>
-            {filme.orcamento.toLocaleString('pt-BR')}
-            </p>
+            <p>{filme.orcamento.toLocaleString('pt-BR')}</p>
           </div>
 
           <div className="info-box">
@@ -201,7 +155,6 @@ function Detalhe(){
       <section className="blue-glow"></section>
 
     </main>
-
   )
 }
 

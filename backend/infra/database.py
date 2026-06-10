@@ -1,13 +1,22 @@
 import mysql.connector, json
 from infra.query import *
 
-def get_connection():
-    return mysql.connector.connect(
-        host="localhost",
-        user="root",
-        password="root",
-        database="filme_mari"
-    )
+import time
+
+def get_connection(tentativas=5, espera=2):
+    for i in range(tentativas):
+        try:
+            return mysql.connector.connect(
+                host="localhost",
+                user="root",
+                password="root",
+                database="filme_mari",
+                connection_timeout=5
+            )
+        except mysql.connector.Error as e:
+            print(f"Banco não disponível, tentando novamente ({i+1}/{tentativas})...")
+            time.sleep(espera)
+    raise Exception("Não foi possível conectar ao banco de dados.")
 
 def split_info(campo, sep=' | ', sub_sep=' — ', keys=('nome', 'genero')):
     if not campo:

@@ -11,46 +11,40 @@ function Header() {
   const [usuario, setUsuario] = useState(null)
 
   useEffect(() => {
-
     carregarUsuario()
-
   }, [])
 
   async function carregarUsuario() {
 
-    const token = localStorage.getItem(
-      'access_token'
-    )
+    const token = localStorage.getItem('access_token')
+    if (!token) return
 
-    if (!token) {
-      return
-    }
+    let tentativas = 0
+    const maxTentativas = 8
 
-    try {
+    const tentar = async () => {
+      try {
+        const response = await fetch('http://localhost:8000/me', {
+          headers: { Authorization: `Bearer ${token}` }
+        })
 
-      const response = await fetch(
-        'http://localhost:8000/me',
-        {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
+        if (!response.ok) return
+
+        const data = await response.json()
+        setUsuario(data)
+
+      } catch (error) {
+        tentativas++
+        if (tentativas < maxTentativas) {
+          console.warn(`Header: backend ainda não disponível, tentando novamente... (${tentativas}/${maxTentativas})`)
+          setTimeout(tentar, 2000)
+        } else {
+          console.error('Header: não foi possível carregar usuário após várias tentativas.')
         }
-      )
-
-      if (!response.ok) {
-        return
       }
-
-      const data = await response.json()
-
-      setUsuario(data)
-
-    } catch(error) {
-
-      console.error(error)
-
     }
 
+    tentar()
   }
 
   return (
@@ -60,67 +54,35 @@ function Header() {
       <div className="header-left">
 
         {usuario?.imagem ? (
-
           <img
             src={`http://localhost:8000/uploads/${usuario.imagem}`}
             alt="perfil"
             className="profile-image"
           />
-
         ) : (
-
           <FaUserCircle className="profile-icon" />
-
         )}
 
         {usuario ? (
-
-          <Link
-            to="/perfil"
-            className="login-link"
-          >
-            {usuario.nome}
-          </Link>
-
+          <Link to="/perfil" className="login-link">{usuario.nome}</Link>
         ) : (
-
-          <Link
-            to="/login"
-            className="login-link"
-          >
-            Faça Login
-          </Link>
-
+          <Link to="/login" className="login-link">Faça Login</Link>
         )}
 
       </div>
 
       <div className="header-center">
-
         <h1>CINEMATION</h1>
-
       </div>
 
       <nav className="header-right">
-
-        <Link to="/home">
-          Home
-        </Link>
-
-        <Link to="/filmes">
-          Filmes
-        </Link>
-
-        <Link to="/favoritos">
-          Favoritos
-        </Link>
-
+        <Link to="/home">Home</Link>
+        <Link to="/filmes">Filmes</Link>
+        <Link to="/favoritos">Favoritos</Link>
         <IoNotificationsOutline className="notification-icon" />
-
       </nav>
 
     </header>
-
   )
 }
 

@@ -41,6 +41,13 @@ class MyHandler(SimpleHTTPRequestHandler):
         self.send_header('Access-Control-Allow-Headers', 'Content-Type, Authorization')
         self.end_headers()
 
+        def _send_error_json(self, mensagem, status=500):
+            self.send_response(status)
+            self.send_header("Content-Type", "application/json")
+            self.send_header("Access-Control-Allow-Origin", "*")  # ← sem isso erros são bloqueados pelo browser
+            self.end_headers()
+            self.wfile.write(json.dumps({"error": mensagem}).encode())
+
     def do_GET(self):
 
         

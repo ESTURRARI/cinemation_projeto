@@ -1,9 +1,12 @@
-from http.server import HTTPServer
+from http.server import ThreadingHTTPServer
 from api.endpoints import MyHandler
+
+class MeuServidor(ThreadingHTTPServer):
+    allow_reuse_address = True  # ← libera a porta imediatamente ao reiniciar
 
 def main():
     server_address = ('', 8000)
-    httpd = HTTPServer(server_address, MyHandler)
+    httpd = MeuServidor(server_address, MyHandler)
     print('Servidor rodando em http://localhost:8000')
     httpd.serve_forever()
 

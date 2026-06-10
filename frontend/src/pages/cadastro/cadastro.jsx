@@ -11,79 +11,56 @@ function Cadastro(){
   const [username, setUsername] = useState('')
   const [senha, setSenha] = useState('')
   const [confirmarSenha, setConfirmarSenha] = useState('')
+  const [erro, setErro] = useState('')
+  const [carregando, setCarregando] = useState(false)
 
   async function handleCadastro() {
 
-    if (
-      !email ||
-      !username ||
-      !senha ||
-      !confirmarSenha
-    ) {
+    setErro('')
 
-      alert('Preencha todos os campos.')
-
+    if (!email || !username || !senha || !confirmarSenha) {
+      setErro('Preencha todos os campos.')
       return
     }
 
     if (senha !== confirmarSenha) {
-
-      alert('As senhas não coincidem.')
-
+      setErro('As senhas não coincidem.')
       return
     }
 
+    setCarregando(true)
+
     try {
 
-      const response = await fetch(
-        'http://localhost:8000/register',
-        {
-          method: 'POST',
-
-          headers: {
-            'Content-Type': 'application/json'
-          },
-
-          body: JSON.stringify({
-            nome: username,
-            sobrenome: '',
-            apelido: username,
-            email,
-            senha,
-            data_nascimento: null,
-            imagem: null
-          })
-        }
-      )
+      const response = await fetch('http://localhost:8000/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          nome: username,
+          sobrenome: '',
+          apelido: username,
+          email,
+          senha,
+          data_nascimento: null,
+          imagem: null
+        })
+      })
 
       const data = await response.json()
 
-      console.log(data)
-
       if (!response.ok) {
-
-        alert(
-          data.error ||
-          'Erro ao cadastrar usuário.'
-        )
-
+        setErro(data.error || 'Erro ao cadastrar usuário.')
         return
       }
 
       alert('Cadastro realizado com sucesso!')
-
       navigate('/login')
 
     } catch(error) {
-
-      console.error(error)
-
-      alert(
-        'Erro ao conectar com o servidor.'
-      )
-
+      setErro('Não foi possível conectar ao servidor. Verifique se o backend está rodando.')
+    } finally {
+      setCarregando(false)
     }
-
   }
 
   return(
@@ -91,13 +68,10 @@ function Cadastro(){
     <main className="cadastro">
 
       <div className="bola-top"></div>
-
       <div className="bola-bottom"></div>
 
       <header className="header-cadastro">
-
         <h1>CINEMATION</h1>
-
       </header>
 
       <section className="conteudo-cadastro">
@@ -110,57 +84,43 @@ function Cadastro(){
             type="email"
             placeholder="E-mail"
             value={email}
-            onChange={(e) =>
-              setEmail(e.target.value)
-            }
+            onChange={(e) => setEmail(e.target.value)}
           />
 
           <input
             type="text"
             placeholder="Username"
             value={username}
-            onChange={(e) =>
-              setUsername(e.target.value)
-            }
+            onChange={(e) => setUsername(e.target.value)}
           />
 
           <input
             type="password"
             placeholder="Password"
             value={senha}
-            onChange={(e) =>
-              setSenha(e.target.value)
-            }
+            onChange={(e) => setSenha(e.target.value)}
           />
 
           <input
             type="password"
             placeholder="Confirm Password"
             value={confirmarSenha}
-            onChange={(e) =>
-              setConfirmarSenha(e.target.value)
-            }
+            onChange={(e) => setConfirmarSenha(e.target.value)}
           />
+
+          {erro && <p className="erro-msg">{erro}</p>}
 
           <button
             className="btn-cadastro"
             onClick={handleCadastro}
+            disabled={carregando}
           >
-
-            Cadastrar
-
+            {carregando ? 'Cadastrando...' : 'Cadastrar'}
           </button>
 
           <p className="link-login">
-
             Já possui conta?{" "}
-
-            <Link to="/login">
-
-              Faça login
-
-            </Link>
-
+            <Link to="/login">Faça login</Link>
           </p>
 
         </div>
@@ -168,7 +128,6 @@ function Cadastro(){
       </section>
 
     </main>
-
   )
 }
 
