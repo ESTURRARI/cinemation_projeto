@@ -197,8 +197,8 @@ def patch_EditMe(handler):
     if "imagem" in data:
         campos["imagem"] = data["imagem"]
 
-    if "id_genero" in data:
-     campos["id_genero"] = data["id_genero"]
+    # if "id_genero" in data:
+    #  campos["id_genero"] = data["id_genero"]
 
     if not campos:
         handler._send_json({"error": "Nenhum campo para atualizar"}, 400)

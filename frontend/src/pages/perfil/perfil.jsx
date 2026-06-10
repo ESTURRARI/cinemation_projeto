@@ -134,7 +134,6 @@ function Perfil() {
             sobrenome,
             apelido,
             data_nascimento: dataNascimento,
-            id_genero: Number(genero),
             imagem: nomeImagem
           })
         }
