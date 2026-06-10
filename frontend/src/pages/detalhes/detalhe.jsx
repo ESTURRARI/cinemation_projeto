@@ -35,6 +35,7 @@ function Detalhe(){
       </main>
     )
   }
+  console.log(filme)
 
   function toggleFavorito(){
 
@@ -62,13 +63,13 @@ function Detalhe(){
     <main className="detalhe">
 
       <section className="banner-filme">
-        <img src={banners[filme.banner]} alt="" className="banner-img" />
+        <img src={banners[filme.banner] || `http://localhost:8000/uploads/${filme.banner}`} alt="" className="banner-img" />
         <div className="overlay-banner"></div>
       </section>
 
       <section className="conteudo-filme">
 
-        <img src={posters[filme.poster]} alt="" className="poster-detalhe" />
+        <img src={posters[filme.poster] || `http://localhost:8000/uploads/${filme.poster}`} alt="" className="poster-detalhe" />
 
         <div className="info-detalhe">
 
@@ -145,7 +146,7 @@ function Detalhe(){
 
           <div className="info-box">
             <h3>País</h3>
-            <p>{filme.diretores[0]?.paises}</p>
+            <p>{filme.paises?.[0]}</p>
           </div>
 
         </div>

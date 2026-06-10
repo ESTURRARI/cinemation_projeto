@@ -26,14 +26,9 @@ function Adicionar() {
   const [idiomas, setIdiomas] = useState([])
   const [paises, setPaises] = useState([])
 
-  // New states for actors, directors and studios
-  const [atores, setAtores] = useState([])
-  const [diretores, setDiretores] = useState([])
-  const [produtoras, setProdutoras] = useState([])
-
-  const [atorSelecionado, setAtorSelecionado] = useState('')
-  const [diretorSelecionado, setDiretorSelecionado] = useState('')
-  const [produtoraSelecionada, setProdutoraSelecionada] = useState('')
+  const [nomeAtor, setNomeAtor] = useState('')
+  const [nomeDiretor, setNomeDiretor] = useState('')
+  const [nomeProdutora, setNomeProdutora] = useState('')
 
   useEffect(() => {
 
@@ -49,44 +44,29 @@ function Adicionar() {
       .then(res => res.json())
       .then(data => setPaises(data))
 
-    // Fetch actors, directors and studios
-    fetch('http://localhost:8000/atores')
-      .then(res => res.json())
-      .then(data => setAtores(data))
-
-    fetch('http://localhost:8000/diretores')
-      .then(res => res.json())
-      .then(data => setDiretores(data))
-
-    fetch('http://localhost:8000/produtoras')
-      .then(res => res.json())
-      .then(data => setProdutoras(data))
-
   }, [])
 
-  // FIX 1: uploadImagem function defined
   async function uploadImagem(arquivo) {
 
-    const token = localStorage.getItem('access_token')
-
-    const formData = new FormData()
-    formData.append('file', arquivo)
+    const base64 = await new Promise((resolve) => {
+      const reader = new FileReader()
+      reader.onload = () => resolve(reader.result.split(',')[1])
+      reader.readAsDataURL(arquivo)
+    })
 
     const response = await fetch('http://localhost:8000/upload', {
       method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${token}`
-      },
-      body: formData
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        nome: arquivo.name,
+        imagem: base64
+      })
     })
 
     const data = await response.json()
-
-    return data.filename
-
+    return data.arquivo
   }
 
-  // FIX 2 & 3: try/catch complete + handleSubmit properly closed
   async function handleSubmit(e) {
 
     e.preventDefault()
@@ -110,34 +90,26 @@ function Adicionar() {
       sinopse,
       orcamento,
       duracao,
-
       imagem: nomePoster,
       banner: nomeBanner,
-
       categoria_id: [Number(genero)],
       linguagem_id: [Number(idioma)],
       pais_origem_id: [Number(pais)],
-
-      produtora_id: [Number(produtoraSelecionada)],
-      diretor_id: [Number(diretorSelecionado)],
-      atores_ids: [Number(atorSelecionado)],
+      diretor_nome: nomeDiretor,
+      ator_nome: nomeAtor,
+      produtora_nome: nomeProdutora,
     }
 
     try {
 
-      const response = await fetch(
-        'http://localhost:8000/cadastrani',
-        {
-          method: 'POST',
-
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          },
-
-          body: JSON.stringify(novoFilme)
-        }
-      )
+      const response = await fetch('http://localhost:8000/cadastrani', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(novoFilme)
+      })
 
       const data = await response.json()
 
@@ -147,16 +119,16 @@ function Adicionar() {
       }
 
       alert('Filme enviado com sucesso!')
+      navigate(-1)
 
     } catch (error) {
 
       console.error(error)
-
       alert('Erro ao cadastrar filme.')
 
     }
 
-  } // end handleSubmit
+  }
 
   return (
 
@@ -185,87 +157,53 @@ function Adicionar() {
           <div className="coluna-esquerda">
 
             <div className="poster-area">
-
               <div className={`poster-preview ${previewPoster ? '' : 'vazio'}`}>
-
                 <label className="upload-area">
-
                   {previewPoster ? (
-
                     <img src={previewPoster} alt="Poster" />
-
                   ) : (
-
                     <>
                       <FaCamera />
                       <h3>Adicionar Poster</h3>
                       <p>Clique para selecionar uma imagem</p>
                     </>
-
                   )}
-
                   <input
                     type="file"
                     accept="image/*"
                     onChange={(e) => {
-
                       const arquivo = e.target.files[0]
-
                       setPoster(arquivo)
-
-                      if (arquivo) {
-                        setPreviewPoster(URL.createObjectURL(arquivo))
-                      }
-
+                      if (arquivo) setPreviewPoster(URL.createObjectURL(arquivo))
                     }}
                   />
-
                 </label>
-
               </div>
-
             </div>
 
             <div className="banner-area">
-
               <div className={`banner-preview ${previewBanner ? '' : 'vazio'}`}>
-
                 <label className="upload-area">
-
                   {previewBanner ? (
-
                     <img src={previewBanner} alt="Banner" />
-
                   ) : (
-
                     <>
                       <FaCamera />
                       <h3>Adicionar Banner</h3>
                       <p>Clique para selecionar uma imagem</p>
                     </>
-
                   )}
-
                   <input
                     type="file"
                     accept="image/*"
                     onChange={(e) => {
-
                       const arquivo = e.target.files[0]
-
                       setBanner(arquivo)
-
-                      if (arquivo) {
-                        setPreviewBanner(URL.createObjectURL(arquivo))
-                      }
-
+                      if (arquivo) setPreviewBanner(URL.createObjectURL(arquivo))
                     }}
                   />
-
                 </label>
-
               </div>
-
             </div>
 
           </div>
@@ -273,207 +211,121 @@ function Adicionar() {
           <form className="formulario" onSubmit={handleSubmit}>
 
             <div className="grupo-input">
-
               <label>Título:</label>
-
               <div className="input-editavel">
-
                 <input
                   type="text"
                   placeholder="Digite o título"
                   value={titulo}
                   onChange={(e) => setTitulo(e.target.value)}
                 />
-
                 <FaPen className="icone-lapis" />
-
               </div>
-
             </div>
 
             <div className="linha-inputs">
 
               <div className="grupo-input">
-
                 <label>Ano:</label>
-
                 <div className="input-editavel">
-
                   <input
                     type="text"
                     placeholder="Digite o ano"
                     value={ano}
                     onChange={(e) => setAno(e.target.value)}
                   />
-
                   <FaPen className="icone-lapis" />
-
                 </div>
-
               </div>
 
               <div className="grupo-input">
-
                 <label>Gênero:</label>
-
                 <div className="input-editavel">
-
                   <select
                     value={genero}
                     onChange={(e) => setGenero(e.target.value)}
                   >
-
                     <option value="">Selecione um gênero</option>
-
                     {categorias.map((categoria) => (
-
                       <option key={categoria.id} value={categoria.id}>
                         {categoria.nome}
                       </option>
-
                     ))}
-
                   </select>
-
                   <FaPen className="icone-lapis" />
-
                 </div>
-
               </div>
 
             </div>
 
             <div className="grupo-input">
-
               <label>Sinopse:</label>
-
               <div className="input-editavel">
-
                 <textarea
                   placeholder="Digite a sinopse"
                   value={sinopse}
                   onChange={(e) => setSinopse(e.target.value)}
                 ></textarea>
-
                 <FaPen className="icone-lapis textarea-pen" />
-
               </div>
-
             </div>
 
             <div className="linha-inputs">
 
-              {/* Director select */}
               <div className="grupo-input">
-
                 <label>Diretor:</label>
-
                 <div className="input-editavel">
-
-                  <select
-                    value={diretorSelecionado}
-                    onChange={(e) => setDiretorSelecionado(e.target.value)}
-                  >
-
-                    <option value="">Selecione</option>
-
-                    {diretores.map(diretor => (
-
-                      <option key={diretor.id} value={diretor.id}>
-                        {diretor.nome} {diretor.sobrenome}
-                      </option>
-
-                    ))}
-
-                  </select>
-
+                  <input
+                    type="text"
+                    placeholder="Nome completo do diretor"
+                    value={nomeDiretor}
+                    onChange={(e) => setNomeDiretor(e.target.value)}
+                  />
                   <FaPen className="icone-lapis" />
-
                 </div>
-
               </div>
 
-              {/* Actor select */}
               <div className="grupo-input">
-
                 <label>Ator Principal:</label>
-
                 <div className="input-editavel">
-
-                  <select
-                    value={atorSelecionado}
-                    onChange={(e) => setAtorSelecionado(e.target.value)}
-                  >
-
-                    <option value="">Selecione</option>
-
-                    {atores.map(ator => (
-
-                      <option key={ator.id} value={ator.id}>
-                        {ator.nome} {ator.sobrenome}
-                      </option>
-
-                    ))}
-
-                  </select>
-
+                  <input
+                    type="text"
+                    placeholder="Nome completo do ator"
+                    value={nomeAtor}
+                    onChange={(e) => setNomeAtor(e.target.value)}
+                  />
                   <FaPen className="icone-lapis" />
-
                 </div>
-
               </div>
 
             </div>
 
             <div className="linha-inputs">
 
-              {/* Studio select */}
               <div className="grupo-input">
-
                 <label>Produtora:</label>
-
                 <div className="input-editavel">
-
-                  <select
-                    value={produtoraSelecionada}
-                    onChange={(e) => setProdutoraSelecionada(e.target.value)}
-                  >
-
-                    <option value="">Selecione</option>
-
-                    {produtoras.map(produtora => (
-
-                      <option key={produtora.id} value={produtora.id}>
-                        {produtora.nome}
-                      </option>
-
-                    ))}
-
-                  </select>
-
+                  <input
+                    type="text"
+                    placeholder="Nome da produtora"
+                    value={nomeProdutora}
+                    onChange={(e) => setNomeProdutora(e.target.value)}
+                  />
                   <FaPen className="icone-lapis" />
-
                 </div>
-
               </div>
 
               <div className="grupo-input">
-
                 <label>Orçamento:</label>
-
                 <div className="input-editavel">
-
                   <input
                     type="text"
                     placeholder="Digite o orçamento"
                     value={orcamento}
                     onChange={(e) => setOrcamento(e.target.value)}
                   />
-
                   <FaPen className="icone-lapis" />
-
                 </div>
-
               </div>
 
             </div>
@@ -481,85 +333,56 @@ function Adicionar() {
             <div className="linha-inputs">
 
               <div className="grupo-input">
-
                 <label>Idiomas:</label>
-
                 <div className="input-editavel">
-
                   <select
                     value={idioma}
                     onChange={(e) => setIdioma(e.target.value)}
                   >
-
                     <option value="">Selecione um idioma</option>
-
                     {idiomas.map((idioma) => (
-
                       <option key={idioma.id} value={idioma.id}>
                         {idioma.nome}
                       </option>
-
                     ))}
-
                   </select>
-
                   <FaPen className="icone-lapis" />
-
                 </div>
-
               </div>
 
               <div className="grupo-input">
-
                 <label>País de origem:</label>
-
                 <div className="input-editavel">
-
                   <select
                     value={pais}
                     onChange={(e) => setPais(e.target.value)}
                   >
-
                     <option value="">Selecione um país</option>
-
                     {paises.map((pais) => (
-
                       <option key={pais.id} value={pais.id}>
                         {pais.nome}
                       </option>
-
                     ))}
-
                   </select>
-
                   <FaPen className="icone-lapis" />
-
                 </div>
-
               </div>
 
             </div>
 
-            {/* FIX 4: Duracao input added to the form */}
             <div className="linha-inputs">
 
               <div className="grupo-input">
-
                 <label>Duração (min):</label>
-
                 <div className="input-editavel">
-
                   <input
                     type="text"
                     placeholder="Digite a duração em minutos"
                     value={duracao}
                     onChange={(e) => setDuracao(e.target.value)}
                   />
-
                   <FaPen className="icone-lapis" />
-
                 </div>
-
               </div>
 
             </div>
@@ -592,6 +415,6 @@ function Adicionar() {
 
   )
 
-} // end Adicionar
+}
 
 export default Adicionar

@@ -9,21 +9,37 @@ def loadGenresProducer(tabela):
 
     if tabela not in TABELAS:
         raise ValueError("Tabela inválida!")
-    
+
     query = f"SELECT * FROM {tabela} ORDER BY nome"
     cursor.execute(query)
     results = cursor.fetchall()
     cursor.close()
     db.close()
 
-    listaGP = [
+    return [
         {
             "id": item[0],
             "nome": item[1]
         }
         for item in results
     ]
-    return listaGP
+
+
+def getProducerByName(nome):
+    db = get_connection()
+    cursor = db.cursor()
+
+    cursor.execute(
+        "SELECT id_produtora FROM produtora WHERE nome = %s",
+        (nome,)
+    )
+    result = cursor.fetchone()
+
+    cursor.close()
+    db.close()
+
+    return result[0] if result else None
+
 
 def insertGenresProducer(tabela, nome):
     if tabela not in TABELAS:
@@ -31,7 +47,6 @@ def insertGenresProducer(tabela, nome):
 
     db = get_connection()
     cursor = db.cursor()
-
 
     cursor.execute(
         f"SELECT * FROM {tabela} WHERE nome = %s",
@@ -41,7 +56,6 @@ def insertGenresProducer(tabela, nome):
         cursor.close()
         db.close()
         return {"error": f"{nome} já existe em {tabela}"}
-
 
     cursor.execute(
         f"INSERT INTO {tabela} (nome) VALUES (%s)",
@@ -61,7 +75,6 @@ def deleteGenresProducer(tabela, id_item):
     db = get_connection()
     cursor = db.cursor()
 
-
     cursor.execute(f"SELECT * FROM {tabela} WHERE id_{tabela} = %s", (id_item,))
     if not cursor.fetchone():
         cursor.close()
@@ -73,19 +86,16 @@ def deleteGenresProducer(tabela, id_item):
             "SELECT * FROM filme_categoria WHERE id_categoria = %s",
             (id_item,)
         )
-
     elif tabela == "produtora":
         cursor.execute(
             "SELECT * FROM filme_produtora WHERE id_produtora = %s",
             (id_item,)
         )
-
     elif tabela == "linguagem":
         cursor.execute(
             "SELECT * FROM filme_linguagem WHERE id_linguagem = %s",
             (id_item,)
         )
-
     elif tabela == "pais":
         cursor.execute(
             "SELECT * FROM filme_pais WHERE id_pais = %s",
@@ -99,7 +109,6 @@ def deleteGenresProducer(tabela, id_item):
             "error": f"Não é possível deletar {tabela}. Está vinculado a um ou mais filmes."
         }
 
-
     cursor.execute(
         f"DELETE FROM {tabela} WHERE id_{tabela} = %s",
         (id_item,)
@@ -110,4 +119,3 @@ def deleteGenresProducer(tabela, id_item):
     db.close()
 
     return loadGenresProducer(tabela)
-

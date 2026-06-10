@@ -19,16 +19,18 @@ def get_connection(tentativas=5, espera=2):
     raise Exception("Não foi possível conectar ao banco de dados.")
 
 def split_info(campo, sep=' | ', sub_sep=' — ', keys=('nome', 'genero')):
+    import re as _re
     if not campo:
         return []
-    partes = campo.split(sep)
+    partes = _re.split(r'\s*\|\s*', campo)
     resultado = []
     for parte in partes:
-        subpartes = parte.split(sub_sep)
-        if len(subpartes) == len(keys):
+        parte = parte.strip()
+        subpartes = _re.split(r'\s*—\s*', parte)
+        if len(subpartes) >= len(keys):
             resultado.append({k: v.strip() for k, v in zip(keys, subpartes)})
         else:
-            resultado.append({"valor": parte.strip()})
+            resultado.append({keys[0]: subpartes[0].strip()})
     return resultado
 
 def loadFilminhos():
@@ -209,7 +211,11 @@ def loadFilmini(id):
                 sep=' | ',
                 sub_sep=' — ',
                 keys=('nome', 'genero', 'paises')
-            )
+            ),
+
+            "paises": [
+                p.strip() for p in item[15].split(',')
+            ] if item[15] else []
         }
             return filme
     else:

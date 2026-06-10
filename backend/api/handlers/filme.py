@@ -118,22 +118,11 @@ def post_AddCat(handler):
 def post_Cadastrani(handler):
     header_auth = handler.headers.get("Authorization", "")
 
-    if not header_auth.startswith("Bearer "):
-        handler._send_json({"error": "Token não informado"}, 401)
-        return
-
-    token = header_auth.split(" ")[1]
-    payload = verify_jwt(token)
-
-    if not payload:
+    if not auth_token(header_auth):
         handler._send_json({"error": "Token inválido ou expirado"}, 401)
         return
 
-    # o Role é que define a 'flag' ela ñ vem do front
-    role = payload.get("role")
-    flag = True if role == "admin" else False
-
-    content_length = int(handler.headers['Content-Length'])
+    content_length = int(handler.headers.get('Content-Length', 0))
     body = handler.rfile.read(content_length).decode('utf-8')
 
     try:
@@ -142,61 +131,205 @@ def post_Cadastrani(handler):
         handler._send_json({"error": "JSON inválido"}, 400)
         return
 
-    nome = data.get("titulo")
-    ano = int(data.get("ano"))
-    sinopse = data.get("sinopse")
-    duracao = data.get("duracao")
-    poster = data.get("imagem")
-    banner = data.get("banner")
+    # --- Diretor: busca pelo nome ou insere se não existir ---
+    diretores_ids = []
+    diretor_nome = data.get("diretor_nome", "").strip()
+    if diretor_nome:
+        id_dir = getActorDirectorByName("diretor", diretor_nome)
+        if id_dir is None:
+            id_dir = insertActorDirectorReturnId("diretor", diretor_nome)
+        diretores_ids = [id_dir]
 
-    orcamento_raw = data.get("orcamento", "0")
-    
-    if isinstance(orcamento_raw, str):
-        orcamento = int(
-            orcamento_raw
-            .replace("R$", "")
-            .replace(".", "")
-            .replace(",", "")
-            .strip()
-        )
-    else:
-        orcamento = int(orcamento_raw)
+    # --- Ator: busca pelo nome ou insere se não existir ---
+    atores_ids = []
+    ator_nome = data.get("ator_nome", "").strip()
+    if ator_nome:
+        id_ator = getActorDirectorByName("ator", ator_nome)
+        if id_ator is None:
+            id_ator = insertActorDirectorReturnId("ator", ator_nome)
+        atores_ids = [id_ator]
 
+    # --- Produtora: busca pelo nome ou insere se não existir ---
+    produtoras_ids = []
+    id_produtora_principal = None
+    produtora_nome = data.get("produtora_nome", "").strip()
+    if produtora_nome:
+        id_prod = getProducerByName(produtora_nome)
+        if id_prod is None:
+            from infra.genresProducers import insertGenresProducer
+            insertGenresProducer("produtora", produtora_nome)
+            id_prod = getProducerByName(produtora_nome)
+        if id_prod:
+            produtoras_ids = [id_prod]
+            id_produtora_principal = id_prod
 
-    categorias = data.get("categoria_id", [])
-    diretores = data.get("diretor_id", [])
-    atores = data.get("atores_ids", [])
-    produtoras = data.get("produtora_id", [])
-    linguagens = data.get("linguagem_id", [])
-    paises = data.get("pais_origem_id", [])
+    # --- Demais campos ---
+    categorias_ids = data.get("categoria_id", [])
+    linguagens_ids = data.get("linguagem_id", [])
+    paises_ids     = data.get("pais_origem_id", [])
 
-    produtora_principal = produtoras[0] if produtoras else None
+    try:
+        orcamento = int(str(data.get("orcamento", 0)).replace(".", "").replace(",", "").replace("R$", "").strip())
+    except:
+        orcamento = 0
 
-    resp = insertFilminhos(
-        nome=nome,
-        produtora_principal=produtora_principal,
-        produtoras=produtoras,
-        categorias=categorias,
-        atores=atores,
-        diretores=diretores,
-        linguagens=linguagens,
-        paises=paises,
+    resultado = insertFilminhos(
+        nome=data.get("titulo", ""),
+        produtora_principal=id_produtora_principal,
+        produtoras=produtoras_ids,
+        categorias=categorias_ids,
+        atores=atores_ids,
+        diretores=diretores_ids,
+        linguagens=linguagens_ids,
+        paises=paises_ids,
         orcamento=orcamento,
-        duracao=duracao,
-        sinopse=sinopse,
-        ano=ano,
-        poster=poster,
-        banner=banner,
-        flag=flag
+        duracao=data.get("duracao", ""),
+        sinopse=data.get("sinopse", ""),
+        ano=data.get("ano", None),
+        poster=data.get("imagem", None),
+        banner=data.get("banner", None),
+        flag=0
     )
 
-    if flag:
-        handler._send_json(resp, 201)
-    else:
-        handler._send_json(
-            {"message": "Filme enviado para aprovação do administrador"},
-            201
+    handler._send_json(resultado, 201)
+
+
+from infra.database import *
+
+TABELAS = ["ator", "diretor"]
+
+def loadActorsDirector(tabela):
+    if tabela not in TABELAS:
+        raise ValueError("Tabela inválida!")
+
+    db = get_connection()
+    cursor = db.cursor()
+
+    cursor.execute(f"SELECT * FROM {tabela}")
+    results = cursor.fetchall()
+
+    cursor.close()
+    db.close()
+
+    return [
+        {
+            "id": item[0],
+            "nome": item[1],
+            "sobrenome": item[2],
+            "id_genero": item[3]
+        }
+        for item in results
+    ]
+
+
+def getActorDirectorByName(tabela, nome_completo):
+    if tabela not in TABELAS:
+        raise ValueError("Tabela inválida!")
+
+    partes = nome_completo.strip().split(" ", 1)
+    nome = partes[0]
+    sobrenome = partes[1] if len(partes) > 1 else ""
+
+    db = get_connection()
+    cursor = db.cursor()
+
+    cursor.execute(
+        f"SELECT id_{tabela} FROM {tabela} WHERE nome = %s AND sobrenome = %s",
+        (nome, sobrenome)
+    )
+    result = cursor.fetchone()
+
+    cursor.close()
+    db.close()
+
+    return result[0] if result else None
+
+
+def insertActorDirectorReturnId(tabela, nome_completo, genero=3):
+    if tabela not in TABELAS:
+        raise ValueError("Tabela inválida!")
+
+    partes = nome_completo.strip().split(" ", 1)
+    nome = partes[0]
+    sobrenome = partes[1] if len(partes) > 1 else ""
+
+    db = get_connection()
+    cursor = db.cursor()
+
+    cursor.execute(
+        f"INSERT INTO {tabela} (nome, sobrenome, id_genero) VALUES (%s, %s, %s)",
+        (nome, sobrenome, genero)
+    )
+
+    novo_id = cursor.lastrowid
+
+    db.commit()
+    cursor.close()
+    db.close()
+
+    return novo_id
+
+
+def insertActorDirector(tabela, nome, sobrenome, genero=3):
+    if tabela not in TABELAS:
+        raise ValueError("Tabela inválida!")
+
+    db = get_connection()
+    cursor = db.cursor()
+
+    cursor.execute(
+        f"INSERT INTO {tabela} (nome, sobrenome, id_genero) VALUES (%s, %s, %s)",
+        (nome, sobrenome, genero)
+    )
+
+    db.commit()
+    cursor.close()
+    db.close()
+
+    return loadActorsDirector(tabela)
+
+
+def deleteActorsDirector(tabela, id_item):
+    if tabela not in TABELAS:
+        raise ValueError("Tabela inválida!")
+
+    db = get_connection()
+    cursor = db.cursor()
+
+    cursor.execute(f"SELECT * FROM {tabela} WHERE id_{tabela} = %s", (id_item,))
+    if not cursor.fetchone():
+        cursor.close()
+        db.close()
+        return {"error": f"{tabela} não encontrado"}
+
+    if tabela == "ator":
+        cursor.execute(
+            "SELECT * FROM filme_ator WHERE id_ator = %s",
+            (id_item,)
         )
+    else:
+        cursor.execute(
+            "SELECT * FROM filme_diretor WHERE id_diretor = %s",
+            (id_item,)
+        )
+
+    if cursor.fetchone():
+        cursor.close()
+        db.close()
+        return {
+            "error": f"Não é possível deletar {tabela}. Está vinculado a um ou mais filmes."
+        }
+
+    cursor.execute(
+        f"DELETE FROM {tabela} WHERE id_{tabela} = %s",
+        (id_item,)
+    )
+
+    db.commit()
+    cursor.close()
+    db.close()
+
+    return loadActorsDirector(tabela)
 
 def put_AprovaFilme(handler):
     header_auth = handler.headers.get("Authorization", "")

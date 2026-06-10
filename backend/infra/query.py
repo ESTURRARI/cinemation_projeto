@@ -83,7 +83,13 @@ SELECT
       WHERE fa.id_filme = f.id_filme
       ORDER BY a.sobrenome, a.nome
     ) z
-  ) AS atores
+  ) AS atores,
+  (
+    SELECT GROUP_CONCAT(DISTINCT pa.nome ORDER BY pa.nome SEPARATOR ', ')
+    FROM filme_pais fp2
+    JOIN pais pa ON pa.id_pais = fp2.id_pais
+    WHERE fp2.id_filme = f.id_filme
+  ) AS paises
 FROM filme f
 LEFT JOIN produtora pp ON pp.id_produtora = f.id_produtora_principal
 WHERE f.id_filme = %s;

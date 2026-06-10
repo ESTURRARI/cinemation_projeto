@@ -26,6 +26,54 @@ def loadActorsDirector(tabela):
     ]
 
 
+def getActorDirectorByName(tabela, nome_completo):
+    if tabela not in TABELAS:
+        raise ValueError("Tabela inválida!")
+
+    partes = nome_completo.strip().split(" ", 1)
+    nome = partes[0]
+    sobrenome = partes[1] if len(partes) > 1 else ""
+
+    db = get_connection()
+    cursor = db.cursor()
+
+    cursor.execute(
+        f"SELECT id_{tabela} FROM {tabela} WHERE nome = %s AND sobrenome = %s",
+        (nome, sobrenome)
+    )
+    result = cursor.fetchone()
+
+    cursor.close()
+    db.close()
+
+    return result[0] if result else None
+
+
+def insertActorDirectorReturnId(tabela, nome_completo, genero=3):
+    if tabela not in TABELAS:
+        raise ValueError("Tabela inválida!")
+
+    partes = nome_completo.strip().split(" ", 1)
+    nome = partes[0]
+    sobrenome = partes[1] if len(partes) > 1 else ""
+
+    db = get_connection()
+    cursor = db.cursor()
+
+    cursor.execute(
+        f"INSERT INTO {tabela} (nome, sobrenome, id_genero) VALUES (%s, %s, %s)",
+        (nome, sobrenome, genero)
+    )
+
+    novo_id = cursor.lastrowid
+
+    db.commit()
+    cursor.close()
+    db.close()
+
+    return novo_id
+
+
 def insertActorDirector(tabela, nome, sobrenome, genero=3):
     if tabela not in TABELAS:
         raise ValueError("Tabela inválida!")
@@ -43,6 +91,7 @@ def insertActorDirector(tabela, nome, sobrenome, genero=3):
     db.close()
 
     return loadActorsDirector(tabela)
+
 
 def deleteActorsDirector(tabela, id_item):
     if tabela not in TABELAS:
@@ -62,7 +111,7 @@ def deleteActorsDirector(tabela, id_item):
             "SELECT * FROM filme_ator WHERE id_ator = %s",
             (id_item,)
         )
-    else:  
+    else:
         cursor.execute(
             "SELECT * FROM filme_diretor WHERE id_diretor = %s",
             (id_item,)
@@ -85,4 +134,3 @@ def deleteActorsDirector(tabela, id_item):
     db.close()
 
     return loadActorsDirector(tabela)
-
