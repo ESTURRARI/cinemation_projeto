@@ -10,6 +10,7 @@ from api.jwt import *
 from api.handlers.filme import *
 from api.handlers.users import *
 from api.handlers.auth import *
+from api.handlers.upload import *
 
 
 class MyHandler(SimpleHTTPRequestHandler):
@@ -36,7 +37,7 @@ class MyHandler(SimpleHTTPRequestHandler):
     def do_OPTIONS(self):
         self.send_response(200)
         self.send_header('Access-Control-Allow-Origin', '*')
-        self.send_header('Access-Control-Allow-Methods', 'GET, POST, DELETE, OPTIONS')
+        self.send_header('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS')
         self.send_header('Access-Control-Allow-Headers', 'Content-Type, Authorization')
         self.end_headers()
 
@@ -49,6 +50,33 @@ class MyHandler(SimpleHTTPRequestHandler):
 
         if self.path.startswith("/docs/"):
             return super().do_GET()
+        
+        if self.path.startswith("/uploads/"):
+
+            arquivo = self.path.lstrip("/")
+
+            if os.path.exists(arquivo):
+
+                self.send_response(200)
+
+                if arquivo.endswith(".jpg") or arquivo.endswith(".jpeg"):
+                    self.send_header("Content-Type", "image/jpeg")
+
+                elif arquivo.endswith(".png"):
+                    self.send_header("Content-Type", "image/png")
+
+                elif arquivo.endswith(".webp"):
+                    self.send_header("Content-Type", "image/webp")
+
+                self.end_headers()
+
+                with open(arquivo, "rb") as f:
+                    self.wfile.write(f.read())
+
+                return
+
+            self.send_error(404)
+            return
 
 
         elif self.path == "/listagem":
@@ -103,6 +131,9 @@ class MyHandler(SimpleHTTPRequestHandler):
 
         elif self.path == '/logout':
             post_Logout(self)
+
+        elif self.path == '/upload':
+            post_Upload(self)
 
     
     def do_PUT(self):

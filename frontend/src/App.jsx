@@ -18,6 +18,7 @@ function App() {
   const location = useLocation()
 
   const esconderLayout =
+    location.pathname === '/' ||
     location.pathname === '/login' ||
     location.pathname === '/cadastro'
 
@@ -27,16 +28,20 @@ function App() {
       {!esconderLayout && <Header />}
 
       <Routes>
+
         <Route path="/" element={<Login />} />
+        <Route path="/login" element={<Login />} />
+
+        <Route path="/cadastro" element={<Cadastro />} />
+
         <Route path="/home" element={<Home />} />
         <Route path="/filmes" element={<Filmes />} />
         <Route path="/favoritos" element={<Favoritos />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/cadastro" element={<Cadastro />} />
         <Route path="/perfil" element={<Perfil />} />
         <Route path="/detalhes/:id" element={<Detalhes />} />
         <Route path="/editar" element={<Editar />} />
         <Route path="/adicionar" element={<Adicionar />} />
+
       </Routes>
 
       {!esconderLayout && <Footer />}

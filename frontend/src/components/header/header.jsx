@@ -59,7 +59,19 @@ function Header() {
 
       <div className="header-left">
 
-        <FaUserCircle className="profile-icon" />
+        {usuario?.imagem ? (
+
+          <img
+            src={`http://localhost:8000/uploads/${usuario.imagem}`}
+            alt="perfil"
+            className="profile-image"
+          />
+
+        ) : (
+
+          <FaUserCircle className="profile-icon" />
+
+        )}
 
         {usuario ? (
 
