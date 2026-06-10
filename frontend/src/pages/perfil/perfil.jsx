@@ -42,8 +42,6 @@ function Perfil() {
 
       const data = await response.json()
 
-      console.log(data)
-
       setNome(data.nome || '')
       setSobrenome(data.sobrenome || '')
       setApelido(data.apelido || '')
@@ -83,8 +81,6 @@ function Perfil() {
 
     })
 
-    console.log('iniciando upload')
-
     const response = await fetch(
       'http://localhost:8000/upload',
       {
@@ -100,8 +96,6 @@ function Perfil() {
         })
       }
     )
-
-    console.log(response)
 
     const data = await response.json()
 
@@ -120,15 +114,9 @@ function Perfil() {
 
       if (foto) {
 
-        console.log('vai fazer upload')
-
         nomeImagem = await uploadImagem(
           foto
         )
-
-        console.log('upload terminou')
-        console.log(nomeImagem)
-
       }
 
       const response = await fetch(
@@ -153,9 +141,6 @@ function Perfil() {
       )
 
       const data = await response.json()
-
-      console.log(response.status)
-      console.log(data)
 
       if (!response.ok) {
 
