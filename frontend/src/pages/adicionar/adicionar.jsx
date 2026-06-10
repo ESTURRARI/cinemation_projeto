@@ -7,7 +7,7 @@ import { FaPen } from "react-icons/fa";
 import { useNavigate } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 
-function Adicionar(){
+function Adicionar() {
 
   const navigate = useNavigate()
   const [poster, setPoster] = useState(null)
@@ -18,15 +18,22 @@ function Adicionar(){
   const [ano, setAno] = useState('')
   const [genero, setGenero] = useState('')
   const [sinopse, setSinopse] = useState('')
-  const [diretor, setDiretor] = useState('')
-  const [ator, setAtor] = useState('')
-  const [produtora, setProdutora] = useState('')
   const [orcamento, setOrcamento] = useState('')
   const [idioma, setIdioma] = useState('')
   const [pais, setPais] = useState('')
+  const [duracao, setDuracao] = useState('')
   const [categorias, setCategorias] = useState([])
   const [idiomas, setIdiomas] = useState([])
   const [paises, setPaises] = useState([])
+
+  // New states for actors, directors and studios
+  const [atores, setAtores] = useState([])
+  const [diretores, setDiretores] = useState([])
+  const [produtoras, setProdutoras] = useState([])
+
+  const [atorSelecionado, setAtorSelecionado] = useState('')
+  const [diretorSelecionado, setDiretorSelecionado] = useState('')
+  const [produtoraSelecionada, setProdutoraSelecionada] = useState('')
 
   useEffect(() => {
 
@@ -42,34 +49,78 @@ function Adicionar(){
       .then(res => res.json())
       .then(data => setPaises(data))
 
+    // Fetch actors, directors and studios
+    fetch('http://localhost:8000/atores')
+      .then(res => res.json())
+      .then(data => setAtores(data))
+
+    fetch('http://localhost:8000/diretores')
+      .then(res => res.json())
+      .then(data => setDiretores(data))
+
+    fetch('http://localhost:8000/produtoras')
+      .then(res => res.json())
+      .then(data => setProdutoras(data))
+
   }, [])
 
+  // FIX 1: uploadImagem function defined
+  async function uploadImagem(arquivo) {
+
+    const token = localStorage.getItem('access_token')
+
+    const formData = new FormData()
+    formData.append('file', arquivo)
+
+    const response = await fetch('http://localhost:8000/upload', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      },
+      body: formData
+    })
+
+    const data = await response.json()
+
+    return data.filename
+
+  }
+
+  // FIX 2 & 3: try/catch complete + handleSubmit properly closed
   async function handleSubmit(e) {
 
-    const token = localStorage.getItem(
-      'access_token'
-    )
-
-    console.log(token)
-
     e.preventDefault()
+
+    const token = localStorage.getItem('access_token')
+
+    let nomePoster = null
+    let nomeBanner = null
+
+    if (poster) {
+      nomePoster = await uploadImagem(poster)
+    }
+
+    if (banner) {
+      nomeBanner = await uploadImagem(banner)
+    }
 
     const novoFilme = {
       titulo,
       ano,
       sinopse,
       orcamento,
+      duracao,
 
-      imagem: poster?.name,
-      banner: banner?.name,
+      imagem: nomePoster,
+      banner: nomeBanner,
 
       categoria_id: [Number(genero)],
       linguagem_id: [Number(idioma)],
       pais_origem_id: [Number(pais)],
 
-      produtora,
-      diretor,
-      ator
+      produtora_id: [Number(produtoraSelecionada)],
+      diretor_id: [Number(diretorSelecionado)],
+      atores_ids: [Number(atorSelecionado)],
     }
 
     try {
@@ -90,11 +141,14 @@ function Adicionar(){
 
       const data = await response.json()
 
-      console.log(data)
+      if (!response.ok) {
+        alert(data.error || 'Erro ao cadastrar filme')
+        return
+      }
 
       alert('Filme enviado com sucesso!')
 
-    } catch(error) {
+    } catch (error) {
 
       console.error(error)
 
@@ -102,9 +156,9 @@ function Adicionar(){
 
     }
 
-  }
+  } // end handleSubmit
 
-  return ( 
+  return (
 
     <main className="editar">
 
@@ -119,9 +173,7 @@ function Adicionar(){
             className="btn-voltar"
             onClick={() => navigate(-1)}
           >
-
             <IoArrowBack />
-
           </button>
 
           <h1>Adicionar Filme</h1>
@@ -140,10 +192,7 @@ function Adicionar(){
 
                   {previewPoster ? (
 
-                    <img
-                      src={previewPoster}
-                      alt="Poster"
-                    />
+                    <img src={previewPoster} alt="Poster" />
 
                   ) : (
 
@@ -165,9 +214,7 @@ function Adicionar(){
                       setPoster(arquivo)
 
                       if (arquivo) {
-                        setPreviewPoster(
-                          URL.createObjectURL(arquivo)
-                        )
+                        setPreviewPoster(URL.createObjectURL(arquivo))
                       }
 
                     }}
@@ -176,6 +223,7 @@ function Adicionar(){
                 </label>
 
               </div>
+
             </div>
 
             <div className="banner-area">
@@ -186,10 +234,7 @@ function Adicionar(){
 
                   {previewBanner ? (
 
-                    <img
-                      src={previewBanner}
-                      alt="Banner"
-                    />
+                    <img src={previewBanner} alt="Banner" />
 
                   ) : (
 
@@ -211,9 +256,7 @@ function Adicionar(){
                       setBanner(arquivo)
 
                       if (arquivo) {
-                        setPreviewBanner(
-                          URL.createObjectURL(arquivo)
-                        )
+                        setPreviewBanner(URL.createObjectURL(arquivo))
                       }
 
                     }}
@@ -280,19 +323,12 @@ function Adicionar(){
                     onChange={(e) => setGenero(e.target.value)}
                   >
 
-                    <option value="">
-                      Selecione um gênero
-                    </option>
+                    <option value="">Selecione um gênero</option>
 
                     {categorias.map((categoria) => (
 
-                      <option
-                        key={categoria.id}
-                        value={categoria.id}
-                      >
-
+                      <option key={categoria.id} value={categoria.id}>
                         {categoria.nome}
-
                       </option>
 
                     ))}
@@ -327,18 +363,29 @@ function Adicionar(){
 
             <div className="linha-inputs">
 
+              {/* Director select */}
               <div className="grupo-input">
 
                 <label>Diretor:</label>
 
                 <div className="input-editavel">
 
-                  <input
-                    type="text"
-                    placeholder="Digite o diretor"
-                    value={diretor}
-                    onChange={(e) => setDiretor(e.target.value)}
-                  />
+                  <select
+                    value={diretorSelecionado}
+                    onChange={(e) => setDiretorSelecionado(e.target.value)}
+                  >
+
+                    <option value="">Selecione</option>
+
+                    {diretores.map(diretor => (
+
+                      <option key={diretor.id} value={diretor.id}>
+                        {diretor.nome} {diretor.sobrenome}
+                      </option>
+
+                    ))}
+
+                  </select>
 
                   <FaPen className="icone-lapis" />
 
@@ -346,18 +393,29 @@ function Adicionar(){
 
               </div>
 
+              {/* Actor select */}
               <div className="grupo-input">
 
                 <label>Ator Principal:</label>
 
                 <div className="input-editavel">
 
-                  <input
-                    type="text"
-                    placeholder="Digite o ator principal"
-                    value={ator}
-                    onChange={(e) => setAtor(e.target.value)}
-                  />
+                  <select
+                    value={atorSelecionado}
+                    onChange={(e) => setAtorSelecionado(e.target.value)}
+                  >
+
+                    <option value="">Selecione</option>
+
+                    {atores.map(ator => (
+
+                      <option key={ator.id} value={ator.id}>
+                        {ator.nome} {ator.sobrenome}
+                      </option>
+
+                    ))}
+
+                  </select>
 
                   <FaPen className="icone-lapis" />
 
@@ -369,18 +427,29 @@ function Adicionar(){
 
             <div className="linha-inputs">
 
+              {/* Studio select */}
               <div className="grupo-input">
 
                 <label>Produtora:</label>
 
                 <div className="input-editavel">
 
-                  <input
-                    type="text"
-                    placeholder="Digite a produtora"
-                    value={produtora}
-                    onChange={(e) => setProdutora(e.target.value)}
-                  />
+                  <select
+                    value={produtoraSelecionada}
+                    onChange={(e) => setProdutoraSelecionada(e.target.value)}
+                  >
+
+                    <option value="">Selecione</option>
+
+                    {produtoras.map(produtora => (
+
+                      <option key={produtora.id} value={produtora.id}>
+                        {produtora.nome}
+                      </option>
+
+                    ))}
+
+                  </select>
 
                   <FaPen className="icone-lapis" />
 
@@ -422,19 +491,12 @@ function Adicionar(){
                     onChange={(e) => setIdioma(e.target.value)}
                   >
 
-                    <option value="">
-                      Selecione um idioma
-                    </option>
+                    <option value="">Selecione um idioma</option>
 
                     {idiomas.map((idioma) => (
 
-                      <option
-                        key={idioma.id}
-                        value={idioma.id}
-                      >
-
+                      <option key={idioma.id} value={idioma.id}>
                         {idioma.nome}
-
                       </option>
 
                     ))}
@@ -458,22 +520,41 @@ function Adicionar(){
                     onChange={(e) => setPais(e.target.value)}
                   >
 
-                    <option value="">
-                      Selecione um país
-                    </option>
+                    <option value="">Selecione um país</option>
 
                     {paises.map((pais) => (
 
-                      <option
-                        key={pais.id}
-                        value={pais.id}
-                      >
+                      <option key={pais.id} value={pais.id}>
                         {pais.nome}
                       </option>
 
                     ))}
 
                   </select>
+
+                  <FaPen className="icone-lapis" />
+
+                </div>
+
+              </div>
+
+            </div>
+
+            {/* FIX 4: Duracao input added to the form */}
+            <div className="linha-inputs">
+
+              <div className="grupo-input">
+
+                <label>Duração (min):</label>
+
+                <div className="input-editavel">
+
+                  <input
+                    type="text"
+                    placeholder="Digite a duração em minutos"
+                    value={duracao}
+                    onChange={(e) => setDuracao(e.target.value)}
+                  />
 
                   <FaPen className="icone-lapis" />
 
@@ -490,15 +571,11 @@ function Adicionar(){
                 className="btn-cancelar"
                 onClick={() => navigate(-1)}
               >
-
                 Cancelar
-
               </button>
 
               <button type="submit" className="btn-adicionar">
-
                 Adicionar
-
               </button>
 
             </div>
@@ -514,6 +591,7 @@ function Adicionar(){
     </main>
 
   )
-}
+
+} // end Adicionar
 
 export default Adicionar

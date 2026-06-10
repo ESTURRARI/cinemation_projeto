@@ -134,12 +134,10 @@ function Detalhe(){
             </button>
 
             <Link
-              to="/editar"
+              to={`/editar/${id}`}
               className="btn-editar"
             >
-
               Editar Filme
-
             </Link>
 
           </div>

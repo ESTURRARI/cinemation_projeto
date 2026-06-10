@@ -39,7 +39,7 @@ function App() {
         <Route path="/favoritos" element={<Favoritos />} />
         <Route path="/perfil" element={<Perfil />} />
         <Route path="/detalhes/:id" element={<Detalhes />} />
-        <Route path="/editar" element={<Editar />} />
+        <Route path="/editar/:id" element={<Editar />} />
         <Route path="/adicionar" element={<Adicionar />} />
 
       </Routes>

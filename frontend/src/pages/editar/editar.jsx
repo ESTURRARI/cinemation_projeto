@@ -8,6 +8,9 @@ import { FaCamera } from "react-icons/fa";
 import { FaPen } from "react-icons/fa";
 
 import { useNavigate } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
+
+
 
 function Editar(){
 
