@@ -24,6 +24,7 @@ def post_Loginho(handler):
     if user and user["senha"] == hashed:
         payload = {
             "sub": user["email"],
+            "id": user["id_usuario"],
             "role": user["role"],
             "exp": time.time() + TOKEN_EXPIRATION
         }
@@ -72,6 +73,7 @@ def post_Refresh(handler):
 
     new_payload = {
         "sub": payload["sub"],
+        "id": payload.get("id"),
         "role": payload["role"],
         "type": "access",
         "exp": time.time() + TOKEN_EXPIRATION

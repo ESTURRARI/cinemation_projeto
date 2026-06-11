@@ -10,6 +10,16 @@ import { useState, useEffect } from 'react'
 import { posters } from '../../data/posters'
 import { banners } from '../../data/banners'
 
+// Decodifica o role do JWT sem biblioteca
+function getRoleFromToken(token) {
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')))
+    return payload.role
+  } catch {
+    return null
+  }
+}
+
 function Editar() {
 
   const navigate = useNavigate()
@@ -17,6 +27,7 @@ function Editar() {
 
   const [filme, setFilme] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [isAdmin, setIsAdmin] = useState(false)
 
   const [titulo, setTitulo] = useState('')
   const [ano, setAno] = useState('')
@@ -41,6 +52,7 @@ function Editar() {
 
   useEffect(() => {
     const token = localStorage.getItem('access_token')
+    if (token) setIsAdmin(getRoleFromToken(token) === 'admin')
 
     fetch(`http://localhost:8000/filme?id=${id}`)
       .then(res => res.json())
@@ -68,21 +80,11 @@ function Editar() {
       })
       .catch(() => setLoading(false))
 
-    fetch('http://localhost:8000/categorias')
-      .then(res => res.json())
-      .then(data => setCategorias(data))
-
-    fetch('http://localhost:8000/linguagens')
-      .then(res => res.json())
-      .then(data => setIdiomas(data))
-
-    fetch('http://localhost:8000/paises')
-      .then(res => res.json())
-      .then(data => setPaises(data))
-
+    fetch('http://localhost:8000/categorias').then(r => r.json()).then(setCategorias)
+    fetch('http://localhost:8000/linguagens').then(r => r.json()).then(setIdiomas)
+    fetch('http://localhost:8000/paises').then(r => r.json()).then(setPaises)
   }, [id])
 
-  // Pré-seleciona os selects depois que os dados chegam
   useEffect(() => {
     if (!filme || categorias.length === 0) return
     const cat = categorias.find(c => filme.categorias?.includes(c.nome))
@@ -107,27 +109,37 @@ function Editar() {
       reader.onload = () => resolve(reader.result.split(',')[1])
       reader.readAsDataURL(arquivo)
     })
-
     const response = await fetch('http://localhost:8000/upload', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ nome: arquivo.name, imagem: base64 })
     })
-
     const data = await response.json()
     return data.arquivo
   }
 
+  function montarPayload(nomePoster, nomeBanner) {
+    const payload = {
+      titulo, ano, sinopse, orcamento, duracao,
+      diretor_nome: nomeDiretor,
+      ator_nome: nomeAtor,
+      produtora_nome: nomeProdutora,
+      categoria_id: generoSelecionado ? [Number(generoSelecionado)] : [],
+      linguagem_id: idiomaSelecionado ? [Number(idiomaSelecionado)] : [],
+      pais_origem_id: paisSelecionado ? [Number(paisSelecionado)] : [],
+    }
+    if (nomePoster) payload.imagem = nomePoster
+    if (nomeBanner) payload.banner = nomeBanner
+    return payload
+  }
+
   async function handleExcluir() {
     if (!confirm('Tem certeza que deseja excluir este filme?')) return
-
     const token = localStorage.getItem('access_token')
-
     const response = await fetch(`http://localhost:8000/filme?id=${id}`, {
       method: 'DELETE',
       headers: { 'Authorization': `Bearer ${token}` }
     })
-
     if (response.ok) {
       alert('Filme excluído com sucesso!')
       navigate('/filmes')
@@ -137,62 +149,58 @@ function Editar() {
     }
   }
 
-  async function handleSubmit(e) {
+  // Admin: salva diretamente via PATCH
+  async function handleSubmitAdmin(e) {
     e.preventDefault()
-
     const token = localStorage.getItem('access_token')
-
-    let nomePoster = null
-    let nomeBanner = null
-
+    let nomePoster = null, nomeBanner = null
     if (poster) nomePoster = await uploadImagem(poster)
     if (banner) nomeBanner = await uploadImagem(banner)
-
-    const payload = {
-      titulo,
-      ano,
-      sinopse,
-      orcamento,
-      duracao,
-      diretor_nome: nomeDiretor,
-      ator_nome: nomeAtor,
-      produtora_nome: nomeProdutora,
-      categoria_id: generoSelecionado ? [Number(generoSelecionado)] : [],
-      linguagem_id: idiomaSelecionado ? [Number(idiomaSelecionado)] : [],
-      pais_origem_id: paisSelecionado ? [Number(paisSelecionado)] : [],
-    }
-
-    if (nomePoster) payload.imagem = nomePoster
-    if (nomeBanner) payload.banner = nomeBanner
 
     try {
       const response = await fetch(`http://localhost:8000/filme?id=${id}`, {
         method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify(payload)
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        body: JSON.stringify(montarPayload(nomePoster, nomeBanner))
       })
-
       const data = await response.json()
-
-      if (!response.ok) {
-        alert(data.error || 'Erro ao editar filme')
-        return
-      }
-
+      if (!response.ok) { alert(data.error || 'Erro ao editar filme'); return }
       alert('Filme editado com sucesso!')
       navigate(-1)
-
-    } catch (error) {
-      console.error(error)
+    } catch {
       alert('Erro ao editar filme.')
+    }
+  }
+
+  // Usuário comum: envia solicitação de edição
+  async function handleSubmitSolicitacao(e) {
+    e.preventDefault()
+    const token = localStorage.getItem('access_token')
+    let nomePoster = null, nomeBanner = null
+    if (poster) nomePoster = await uploadImagem(poster)
+    if (banner) nomeBanner = await uploadImagem(banner)
+
+    const dados = montarPayload(nomePoster, nomeBanner)
+
+    try {
+      const response = await fetch('http://localhost:8000/solicitacoes', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        body: JSON.stringify({ tipo: 'edicao', id_filme: Number(id), dados })
+      })
+      const data = await response.json()
+      if (!response.ok) { alert(data.error || 'Erro ao enviar solicitação'); return }
+      alert('Solicitação de edição enviada! Aguarde a aprovação do administrador.')
+      navigate(-1)
+    } catch {
+      alert('Erro ao enviar solicitação.')
     }
   }
 
   if (loading) return <h1 style={{ color: 'white', padding: '40px' }}>Carregando...</h1>
   if (!filme) return <h1 style={{ color: 'white', padding: '40px' }}>Filme não encontrado.</h1>
+
+  const handleSubmit = isAdmin ? handleSubmitAdmin : handleSubmitSolicitacao
 
   return (
     <main className="editar">
@@ -205,8 +213,14 @@ function Editar() {
           <button type="button" className="btn-voltar" onClick={() => navigate(-1)}>
             <IoArrowBack />
           </button>
-          <h1>Editar Filme</h1>
+          <h1>{isAdmin ? 'Editar Filme' : 'Solicitar Edição'}</h1>
         </div>
+
+        {!isAdmin && (
+          <p className="aviso-solicitacao">
+            Suas alterações serão enviadas para análise do administrador.
+          </p>
+        )}
 
         <section className="area-edicao">
 
@@ -218,10 +232,7 @@ function Editar() {
               )}
               <label className="btn-camera" style={{ cursor: 'pointer' }}>
                 <FaCamera />
-                <input
-                  type="file"
-                  accept="image/*"
-                  style={{ display: 'none' }}
+                <input type="file" accept="image/*" style={{ display: 'none' }}
                   onChange={(e) => {
                     const arquivo = e.target.files[0]
                     setPoster(arquivo)
@@ -237,10 +248,7 @@ function Editar() {
               )}
               <label className="btn-camera-banner" style={{ cursor: 'pointer' }}>
                 <FaCamera />
-                <input
-                  type="file"
-                  accept="image/*"
-                  style={{ display: 'none' }}
+                <input type="file" accept="image/*" style={{ display: 'none' }}
                   onChange={(e) => {
                     const arquivo = e.target.files[0]
                     setBanner(arquivo)
@@ -263,7 +271,6 @@ function Editar() {
             </div>
 
             <div className="linha-inputs">
-
               <div className="grupo-input">
                 <label>Ano:</label>
                 <div className="input-editavel">
@@ -284,7 +291,6 @@ function Editar() {
                   <FaPen className="icone-lapis" />
                 </div>
               </div>
-
             </div>
 
             <div className="grupo-input">
@@ -296,7 +302,6 @@ function Editar() {
             </div>
 
             <div className="linha-inputs">
-
               <div className="grupo-input">
                 <label>Diretor:</label>
                 <div className="input-editavel">
@@ -312,11 +317,9 @@ function Editar() {
                   <FaPen className="icone-lapis" />
                 </div>
               </div>
-
             </div>
 
             <div className="linha-inputs">
-
               <div className="grupo-input">
                 <label>Produtora:</label>
                 <div className="input-editavel">
@@ -332,11 +335,9 @@ function Editar() {
                   <FaPen className="icone-lapis" />
                 </div>
               </div>
-
             </div>
 
             <div className="linha-inputs">
-
               <div className="grupo-input">
                 <label>Idiomas:</label>
                 <div className="input-editavel">
@@ -362,7 +363,6 @@ function Editar() {
                   <FaPen className="icone-lapis" />
                 </div>
               </div>
-
             </div>
 
             <div className="linha-inputs">
@@ -379,11 +379,13 @@ function Editar() {
               <button type="button" className="btn-cancelar" onClick={() => navigate(-1)}>
                 Cancelar
               </button>
-              <button type="button" className="btn-excluir" onClick={handleExcluir}>
-                Excluir
-              </button>
+              {isAdmin && (
+                <button type="button" className="btn-excluir" onClick={handleExcluir}>
+                  Excluir
+                </button>
+              )}
               <button type="submit" className="btn-editar">
-                Salvar
+                {isAdmin ? 'Salvar' : 'Solicitar Edição'}
               </button>
             </div>
 

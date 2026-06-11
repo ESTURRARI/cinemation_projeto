@@ -290,3 +290,11 @@
 .btn-editar:hover{
   transform: translateY(-3px);
 }
+.aviso-solicitacao {
+  color: #f0c040;
+  font-size: 14px;
+  text-align: center;
+  margin: -10px 0 16px;
+  opacity: 0.9;
+  font-style: italic;
+}

@@ -11,6 +11,7 @@ from api.handlers.filme import *
 from api.handlers.users import *
 from api.handlers.auth import *
 from api.handlers.upload import *
+from api.handlers.solicitacoes import *
 
 
 class MyHandler(SimpleHTTPRequestHandler):
@@ -119,6 +120,15 @@ class MyHandler(SimpleHTTPRequestHandler):
         elif self.path == '/usuarios':
             get_Usuarios(self)
 
+        elif self.path == '/solicitacoes/pendentes':
+            get_SolicitacoesPendentes(self)
+
+        elif self.path == '/solicitacoes/minhas':
+            get_MinhasSolicitacoes(self)
+
+        elif self.path == '/solicitacoes/contador':
+            get_ContadorPendentes(self)
+
     def do_POST(self):
         
         if self.path=='/send_loginho':
@@ -142,6 +152,9 @@ class MyHandler(SimpleHTTPRequestHandler):
         elif self.path == '/upload':
             post_Upload(self)
 
+        elif self.path == '/solicitacoes':
+            post_Solicitacao(self)
+
     
     def do_PUT(self):
         if self.path.startswith('/aprovafilme'):
@@ -157,6 +170,9 @@ class MyHandler(SimpleHTTPRequestHandler):
 
         elif self.path == '/edit/me':
             patch_EditMe(self)
+
+        elif self.path.startswith('/solicitacoes'):
+            patch_Solicitacao(self)
 
     def do_DELETE(self):
         header_auth = self.headers.get("Authorization", "")

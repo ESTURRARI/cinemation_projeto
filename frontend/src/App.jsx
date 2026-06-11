@@ -12,6 +12,7 @@ import Perfil from './pages/perfil/perfil'
 import Detalhes from './pages/detalhes/detalhe'
 import Editar from './pages/editar/editar'
 import Adicionar from './pages/adicionar/adicionar'
+import Notificacoes from './pages/notificacoes/notificacoes'
 
 function App() {
 
@@ -41,6 +42,7 @@ function App() {
         <Route path="/detalhes/:id" element={<Detalhes />} />
         <Route path="/editar/:id" element={<Editar />} />
         <Route path="/adicionar" element={<Adicionar />} />
+        <Route path="/notificacoes" element={<Notificacoes />} />
 
       </Routes>
 

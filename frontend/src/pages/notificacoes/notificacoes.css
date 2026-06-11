@@ -1,0 +1,306 @@
+.notificacoes-page {
+  min-height: 100vh;
+  background-color: #010101;
+  overflow: hidden;
+}
+
+.notificacoes-top {
+  width: 100%;
+  height: 180px;
+  background: linear-gradient(
+    to bottom,
+    #001F6C 0%,
+    #010101 100%
+  );
+}
+
+.notificacoes-bottom {
+  width: 100%;
+  height: 180px;
+  margin-top: 80px;
+  background: linear-gradient(
+    to bottom,
+    #010101 0%,
+    #001F6C 100%
+  );
+}
+
+.conteudo-notificacoes {
+  width: 90%;
+  max-width: 860px;
+  margin: auto;
+  padding-bottom: 40px;
+}
+
+/* ── Topo ── */
+.topo-notificacoes {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 36px;
+}
+
+.btn-voltar {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 26px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  opacity: 0.8;
+  transition: opacity 0.2s;
+}
+
+.btn-voltar:hover {
+  opacity: 1;
+}
+
+.topo-notificacoes h1 {
+  font-family: "Crimson Text", serif;
+  font-size: 36px;
+  font-weight: 600;
+  color: white;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+}
+
+.icone-titulo {
+  font-size: 30px;
+  opacity: 0.9;
+}
+
+.contador-badge {
+  background-color: #e02020;
+  color: white;
+  font-size: 13px;
+  font-weight: 700;
+  min-width: 26px;
+  height: 26px;
+  padding: 0 7px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ── Vazio ── */
+.vazio {
+  text-align: center;
+  padding: 80px 0;
+  opacity: 0.4;
+  color: white;
+}
+
+.vazio-icone {
+  font-size: 64px;
+  margin-bottom: 12px;
+}
+
+.vazio p {
+  font-size: 22px;
+  font-family: "Crimson Text", serif;
+}
+
+.carregando {
+  text-align: center;
+  padding: 100px 0;
+  opacity: 0.5;
+  font-size: 22px;
+  color: white;
+  font-family: "Crimson Text", serif;
+}
+
+/* ── Lista ── */
+.lista-solicitacoes {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ── Card ── */
+.card-solicitacao {
+  background: #141414;
+  border-radius: 12px;
+  padding: 20px 24px;
+  border-left: 4px solid transparent;
+  transition: transform 0.15s ease;
+}
+
+.card-solicitacao:hover {
+  transform: translateY(-2px);
+}
+
+.card-solicitacao.tipo-adicao {
+  border-left-color: #4caf82;
+}
+
+.card-solicitacao.tipo-edicao {
+  border-left-color: #2453ff;
+}
+
+/* ── Card header ── */
+.card-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.badge-tipo {
+  font-size: 12px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 999px;
+  letter-spacing: 0.5px;
+  font-family: "Crimson Text", serif;
+}
+
+.badge-tipo.adicao {
+  background: rgba(76, 175, 130, 0.18);
+  color: #4caf82;
+  border: 1px solid #4caf82;
+}
+
+.badge-tipo.edicao {
+  background: rgba(36, 83, 255, 0.18);
+  color: #2453ff;
+  border: 1px solid #2453ff;
+}
+
+.filme-id {
+  font-size: 13px;
+  color: #888;
+  background: #222;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-family: "Crimson Text", serif;
+}
+
+.usuario-info {
+  font-size: 16px;
+  color: #ccc;
+  flex: 1;
+  font-family: "Crimson Text", serif;
+}
+
+.usuario-info strong {
+  color: white;
+}
+
+.usuario-info small {
+  color: #777;
+  margin-left: 4px;
+}
+
+.data-sol {
+  font-size: 13px;
+  color: #555;
+  font-family: "Crimson Text", serif;
+}
+
+/* ── Dados ── */
+.card-dados {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 16px;
+  padding: 12px 14px;
+  background: #0d0d0d;
+  border-radius: 8px;
+}
+
+.dado-linha {
+  display: flex;
+  gap: 8px;
+  font-size: 15px;
+  line-height: 1.5;
+  font-family: "Crimson Text", serif;
+}
+
+.dado-label {
+  color: #777;
+  min-width: 110px;
+  flex-shrink: 0;
+}
+
+.dado-valor {
+  color: #ddd;
+}
+
+/* ── Ações ── */
+.card-acoes {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.input-mensagem {
+  width: 100%;
+  background: #0d0d0d;
+  border: 1px solid #2a2a2a;
+  border-radius: 8px;
+  color: #ccc;
+  padding: 8px 12px;
+  font-size: 16px;
+  font-family: "Crimson Text", serif;
+  resize: none;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.input-mensagem:focus {
+  border-color: #2453ff;
+}
+
+.botoes-resposta {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.btn-aprovar,
+.btn-reprovar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 24px;
+  border: none;
+  border-radius: 999px;
+  font-size: 18px;
+  font-family: "Crimson Text", serif;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.15s;
+}
+
+.btn-aprovar:hover,
+.btn-reprovar:hover {
+  opacity: 0.85;
+  transform: translateY(-2px);
+}
+
+.btn-aprovar:disabled,
+.btn-reprovar:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-aprovar {
+  background-color: #2453ff;
+  color: white;
+}
+
+.btn-reprovar {
+  background-color: #2a2a2a;
+  color: #ff6b6b;
+  border: 1px solid #ff6b6b44;
+}
+
+.btn-aprovar svg,
+.btn-reprovar svg {
+  font-size: 20px;
+}

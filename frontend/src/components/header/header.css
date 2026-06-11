@@ -184,3 +184,38 @@
   object-fit: cover;
   margin-right: 10px;
 }
+/* ── Sininho com badge ── */
+.sininho-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.badge-vermelho {
+  position: absolute;
+  top: -6px;
+  right: -8px;
+
+  background-color: #e02020;
+  color: white;
+
+  font-size: 10px;
+  font-weight: 700;
+  font-family: sans-serif;
+
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+
+  border-radius: 999px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  line-height: 1;
+  pointer-events: none;
+
+  box-shadow: 0 0 0 2px #000;
+}
