@@ -1,10 +1,10 @@
-# 🎬 CINEMATION
+# CINEMATION
 
 Aplicação web de catálogo de filmes com autenticação de usuários, favoritos, notificações e painel de administração.
 
 ---
 
-## 🗂️ Estrutura do Projeto
+## Estrutura do Projeto
 
 ```
 /
@@ -15,7 +15,7 @@ Aplicação web de catálogo de filmes com autenticação de usuários, favorito
 
 ---
 
-## ✅ Pré-requisitos
+## Pré-requisitos
 
 - [Node.js](https://nodejs.org/) (v18+) e npm
 - [Python](https://www.python.org/) (v3.10+)
@@ -71,7 +71,7 @@ O servidor estará disponível em **http://localhost:8000**.
 
 ---
 
-## ⚛️ 3. Frontend
+## 3. Frontend
 
 ### Instalar dependências
 
@@ -90,7 +90,7 @@ O frontend estará disponível em **http://localhost:5173** (ou na porta indicad
 
 ---
 
-## 🚀 Rodando tudo junto
+## Rodando tudo junto
 
 Abra **dois terminais** e execute:
 
@@ -110,8 +110,17 @@ npm run dev
 Acesse **http://localhost:5173** no navegador.
 
 ---
+## Login de usuário admin
+email: admin@example.com
+senha: admin
 
-## 📄 Páginas da aplicação
+##usuario comum você pode utilizar
+email: usuario@mail.com
+senha: 123456
+
+ou cadastrar um novo
+
+## Páginas da aplicação
 
 | Rota | Descrição |
 |---|---|
