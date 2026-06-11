@@ -114,7 +114,7 @@ Acesse **http://localhost:5173** no navegador.
 email: admin@example.com
 senha: admin
 
-##usuario comum você pode utilizar
+## Usuário comum você pode utilizar
 email: usuario@mail.com
 senha: 123456
 
