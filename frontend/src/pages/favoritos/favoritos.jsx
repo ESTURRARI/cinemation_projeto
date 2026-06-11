@@ -50,7 +50,7 @@ function Favoritos(){
               <CardFilme
                 key={filme.id}
                 id={filme.id}
-                imagem={posters[filme.imagem]}
+                imagem={posters[filme.imagem] || `http://localhost:8000/uploads/${filme.imagem}`}
                 nome={filme.nome}
                 ano={filme.ano}
                 genero={filme.genero}
